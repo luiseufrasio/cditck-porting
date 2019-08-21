@@ -1,0 +1,8 @@
+latest-*.zip
+*-results.tar.gz
+*.log
+/dist
+/bundles
+/cdi-tck-glassfish-porting
+/cdi-tck-report
+/payara5
