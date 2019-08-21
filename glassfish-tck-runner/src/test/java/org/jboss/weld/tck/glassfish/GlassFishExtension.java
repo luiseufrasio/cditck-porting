@@ -27,11 +27,11 @@ import org.jboss.arquillian.core.spi.LoadableExtension;
  */
 public class GlassFishExtension implements LoadableExtension {
 
-    private static final String GLASSFISH_CLIENTUTILS_CLASS = "org.jboss.arquillian.container.glassfish.clientutils.GlassFishClientUtil";
+    private static final String PAYARA_CLIENTUTILS_CLASS = "fish.payara.arquillian.container.payara.clientutils.PayaraClientUtil";
    
     public void register(ExtensionBuilder builder) {
 
-        if (Validate.classExists(GLASSFISH_CLIENTUTILS_CLASS)) {
+        if (Validate.classExists(PAYARA_CLIENTUTILS_CLASS)) {
             builder.service(DeploymentExceptionTransformer.class, GlassFishDeploymentExceptionTransformer.class);
 //            builder.service(ExceptionTransformer.class, GlassFishDeploymentExceptionTransformer.class);
             // Override the default NOOP exception transformer

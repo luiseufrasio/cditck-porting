@@ -29,7 +29,7 @@
 	<property name="classes" value="${basedir}/classes" />
 	<property name="dist" value="${basedir}/dist" />
 	<property name="lib" value="${basedir}/lib" />
-	<property name="dist.file" value="cdi-tck-glassfish-porting" />
+	<property name="dist.file" value="cdi-tck-payara-porting" />
 	<property name="admin.port" value="4848"/>
 	<property name="admin.host" value="localhost"/>
 	<property name="javadb.home" value="${glassfish.home}/../javadb"/>
@@ -129,7 +129,7 @@
                 <java outputproperty="sigoutput" fork="true" jar="${lib}/sigtest.jar">
 			<arg value="Signaturetest"/>
                         <arg value="-Classpath"/>
-                        <arg value="${java.home}/${java.classes.for.sig.ext}${pathsep}${glassfish.home}/modules/weld-osgi-bundle.jar${pathsep}${glassfish.home}/modules/cdi-api.jar${pathsep}${glassfish.home}/modules/jakarta.inject.jar${pathsep}${glassfish.home}/modules/jakarta.el.jar/${pathsep}${glassfish.home}/modules/jakarta.interceptor-api.jar${aix.jars}"/>
+                        <arg value="${java.home}/${java.classes.for.sig.ext}${pathsep}${glassfish.home}/modules/weld-osgi-bundle.jar${pathsep}${glassfish.home}/modules/cdi-api.jar${pathsep}${glassfish.home}/modules/javax.inject.jar${pathsep}${glassfish.home}/modules/javax.el.jar/${pathsep}${glassfish.home}/modules/javax.interceptor-api.jar${aix.jars}"/>
                         <arg value="-Package"/>
                         <arg value="javax.enterprise"/>
                         <arg value="-Package"/>
@@ -468,7 +468,7 @@
         <presetdef name="mvn.test">
 		<exec executable="${maven.executable}">
 			<arg value="-P" />
-                        <arg value="glassfish-managed" />
+                        <arg value="payara-managed" />
                         <arg value="-U" />
                         <arg value="clean" />
                         <arg value="test" />                       
@@ -481,10 +481,9 @@
 			<arg value="/c"/>
                         <arg value="${maven.executable}.bat"/>
                         <arg value="-P" />
-                        <arg value="glassfish-managed" />
+                        <arg value="payara-managed" />
                         <arg value="-U" />
                         <arg value="test" />
-                        <arg value="-Darquillian.version=1.1.11.Final" />
 		</exec>
 	</presetdef>
 	

@@ -23,8 +23,8 @@
     <property file="${basedir}/build.properties" />
     <import file="./common.xml"/>
  
-    <property name="admin.user"      value="admin"/>
-    <property name="admin.password"  value="adminadmin" />
+    <property name="admin.user"      value=""/>
+    <property name="admin.password"  value="" />
     <property name="server.host"     value="${admin.host}"/>
     <property name="server.port"     value="${admin.port}"/>
     <property name="server.orb.port" value="${orb.port}"/>
