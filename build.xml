@@ -22,7 +22,7 @@
 	<property environment="env" />
 	<property file="${basedir}/build.properties" />
 
-	<property name="maven.executable" value="${env.MAVEN_HOME}/bin/mvn" />
+	<property name="maven.executable" value="${env.M2_HOME}/bin/mvn" />
         <property name="pathsep" value="${path.separator}"/>
         <property name="tck.version" value="2.0.0"/>
 	<property name="src" value="${basedir}/src" />
@@ -479,7 +479,7 @@
         <presetdef name="mvn.test.win">
 		<exec executable="cmd">
 			<arg value="/c"/>
-                        <arg value="${maven.executable}.bat"/>
+                        <arg value="${maven.executable}.cmd"/>
                         <arg value="-P" />
                         <arg value="payara-managed" />
                         <arg value="-U" />
@@ -498,7 +498,7 @@
         <presetdef name="mvn.install.win">
 		<exec executable="cmd">
 			<arg value="/c"/>
-                        <arg value="${maven.executable}.bat"/>
+                        <arg value="${maven.executable}.cmd"/>
                         <arg value="install"/>
 		</exec>
 	</presetdef>
@@ -517,7 +517,7 @@
         <presetdef name="mvn.dependency.win">
 		<exec executable="cmd">
 			<arg value="/c"/>
-                        <arg value="${maven.executable}.bat"/>
+                        <arg value="${maven.executable}.cmd"/>
                         <arg value="dependency:get"/>
 						<arg value="-DrepositoryUrl=http://central.maven.org/maven2/"/>
 						<arg value="-DgroupId=org.jboss.cdi.tck"/>
