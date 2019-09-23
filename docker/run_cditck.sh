@@ -91,6 +91,7 @@ if [ -f "$REPORT/cdi-$VER-sig/report.html" ]; then
   else 
     sed -i 's/tests=\"TOTAL\"/tests="1"/g' $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
     sed -i 's/failures=\"FAILED\"/failures="1"/g' $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
+    sed -i 's/<testcase classname/<testcase status="Failed"/' $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
   fi
 fi
 
