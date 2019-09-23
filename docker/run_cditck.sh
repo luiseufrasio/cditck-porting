@@ -93,7 +93,7 @@ EOF
 <?xml version="1.0" encoding="UTF-8" ?>
 <testsuite tests="1" failures="1" name="cdi-2.0.0-sig" time="0" errors="0" skipped="0">
 <testcase classname="CDISigTest" name="cdiSigTest" time="0.2" status="Failed">
-<failure type="AssertionFailure" message="Signature test failed">
+<failure type="AssertionFailure" message="Signature test failed">Signature test failed</failure>
 <system-out>
 `cat $REPORT/cdi_sig_test_results.txt`
 </system-out>
