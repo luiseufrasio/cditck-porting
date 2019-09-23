@@ -73,25 +73,33 @@ fi
 
 mv ${REPORT}/cdi-$VER/TEST-TestSuite.xml  ${REPORT}/cdi-$VER/cditck-$VER-junit-report.xml
 sed -i 's/name=\"TestSuite\"/name="cditck-2.0"/g' ${REPORT}/cdi-$VER/cditck-$VER-junit-report.xml
-# Create Junit formated file for sigtests
-echo '<?xml version="1.0" encoding="UTF-8" ?>' > $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
-echo '<testsuite tests="TOTAL" failures="FAILED" name="cdi-2.0.0-sig" time="0" errors="0" skipped="0">' >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
-echo '<testcase classname="CDISigTest" name="cdiSigTest" time="0.2">' >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
-echo '  <system-out>' >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
-cat $REPORT/cdi_sig_test_results.txt >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
-echo '  </system-out>' >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
-echo '</testcase>' >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
-echo '</testsuite>' >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
 
+# Create Junit formated file for sigtests
 # Fill appropriate test counts
 if [ -f "$REPORT/cdi-$VER-sig/report.html" ]; then
   if grep -q STATUS:Passed "$REPORT/cdi-$VER-sig/report.html"; then
-    sed -i 's/tests=\"TOTAL\"/tests="1"/g' $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
-    sed -i 's/failures=\"FAILED\"/failures="0"/g' $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
+    cat > $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite tests="1" failures="0" name="cdi-2.0.0-sig" time="0" errors="0" skipped="0">
+<testcase classname="CDISigTest" name="cdiSigTest" time="0.2">
+<system-out>
+`cat $REPORT/cdi_sig_test_results.txt`
+</system-out>
+</testcase>
+</testsuite>
+EOF
   else 
-    sed -i 's/tests=\"TOTAL\"/tests="1"/g' $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
-    sed -i 's/failures=\"FAILED\"/failures="1"/g' $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
-    sed -i 's/<testcase classname/<testcase status="Failed" classname/' $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
+    cat > $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite tests="1" failures="1" name="cdi-2.0.0-sig" time="0" errors="0" skipped="0">
+<testcase classname="CDISigTest" name="cdiSigTest" time="0.2" status="Failed">
+<failure type="AssertionFailure" message="Signature test failed">
+<system-out>
+`cat $REPORT/cdi_sig_test_results.txt`
+</system-out>
+</testcase>
+</testsuite>
+EOF
   fi
 fi
 
