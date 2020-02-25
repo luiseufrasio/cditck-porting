@@ -509,7 +509,7 @@
 		<exec executable="${maven.executable}">
 			
                         <arg value="dependency:get" />
-						<arg value="-DrepositoryUrl=http://central.maven.org/maven2/"/>
+						<arg value="-DrepositoryUrl=https://repo1.maven.org/maven2/"/>
 						<arg value="-DgroupId=org.jboss.cdi.tck"/>
 						<arg value="-DartifactId=cdi-tck-ext-lib"/>
 						<arg value="-Dversion=${cdiext.version}"/>						
@@ -522,7 +522,7 @@
 			<arg value="/c"/>
                         <arg value="${maven.executable}.cmd"/>
                         <arg value="dependency:get"/>
-						<arg value="-DrepositoryUrl=http://central.maven.org/maven2/"/>
+						<arg value="-DrepositoryUrl=https://repo1.maven.org/maven2/"/>
 						<arg value="-DgroupId=org.jboss.cdi.tck"/>
 						<arg value="-DartifactId=cdi-tck-ext-lib"/>
 						<arg value="-Dversion=${cdiext.version}"/>

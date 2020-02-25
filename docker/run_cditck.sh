@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -x -e
 #
 # Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, 2020 Payara Foundation and/or its affiliates. All rights reserved.
@@ -30,7 +30,7 @@ export TS_HOME=${WORKSPACE}/cdi-tck-glassfish-porting
 #Install Glassfish
 echo "Download and install GlassFish 5.0.1 ..."
 wget --progress=bar:force --no-cache $GF_BUNDLE_URL -O latest-glassfish.zip
-unzip -o ${WORKSPACE}/latest-glassfish.zip -d ${WORKSPACE}
+unzip -q -o ${WORKSPACE}/latest-glassfish.zip -d ${WORKSPACE}
 
 which ant
 ant -version

@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -x -e
 #
 # Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, 2020 Payara Foundation and/or its affiliates. All rights reserved.
@@ -23,7 +23,7 @@ echo "export PATH=$PATH"
 cd $WORKSPACE
 WGET_PROPS="--progress=bar:force --no-cache"
 wget $WGET_PROPS $GF_BUNDLE_URL -O ${WORKSPACE}/latest-glassfish.zip
-unzip -o ${WORKSPACE}/latest-glassfish.zip -d ${WORKSPACE} >/dev/null
+unzip -q -o ${WORKSPACE}/latest-glassfish.zip -d ${WORKSPACE} >/dev/null
 
 which ant
 ant -version
