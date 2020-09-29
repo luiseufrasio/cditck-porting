@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -34,7 +34,7 @@ spec:
     - "localhost.localdomain"
   containers:
   - name: cdi-tck-ci
-    image: anajosep/cts-base:0.1
+    image: jakartaee/cts-base:0.2
     command:
     - cat
     tty: true
@@ -51,18 +51,30 @@ spec:
   }
   parameters {
     string(name: 'GF_BUNDLE_URL', 
-           defaultValue: 'https://download.eclipse.org/ee4j/jakartaee-tck/8.0.1/nightly/glassfish.zip',
+           defaultValue: 'https://download.eclipse.org/ee4j/glassfish/glassfish-6.0.0-SNAPSHOT-nightly.zip',
            description: 'URL required for downloading GlassFish Full/Web profile bundle' )
     choice(name: 'PROFILE', choices: 'FULL\nWEB', 
            description: 'Profile to be used for running CTS either web/full' )
+    choice(name: 'JDK', choices: 'JDK8\nJDK11',
+           description: 'Java SE Version to be used for running TCK either JDK8/JDK11' )
 	string(name: 'TCK_BUNDLE_FILE_NAME', 
-           defaultValue: 'cdi-tck-glassfish-porting-2.0.0.zip', 
+           defaultValue: '', 
 	   description: 'Name of bundle file to be appended to the base url' )
+	string(name: 'CDI_TCK_BUNDLE_URL', 
+             defaultValue: 'https://jakarta.oss.sonatype.org/content/repositories/staging/jakarta/enterprise/cdi-tck-dist/3.0.0/cdi-tck-dist-3.0.0-dist.zip', 
+  	         description: 'CDI TCK bundle url' )
+    string(name: 'CDI_TCK_VERSION', 
+             defaultValue: '3.0.0', 
+             description: 'version of bundle file' )
+    string(name: 'TCK_BUNDLE_BASE_URL', 
+             defaultValue: '', 
+             description: 'url of porting kit bundle file' )
   }
   environment {
     ANT_HOME = "/usr/share/ant"
     MAVEN_HOME = "/usr/share/maven"
-    ANT_OPTS = "-Djavax.xml.accessExternalStylesheet=all -Djavax.xml.accessExternalSchema=all -Djavax.xml.accessExternalDTD=file,http" 
+    ANT_OPTS = "-Djavax.xml.accessExternalStylesheet=all -Djavax.xml.accessExternalSchema=all -Djavax.xml.accessExternalDTD=file,http -Duser.home=$HOME"
+	MAVEN_OPTS="-Duser.home=$HOME"
   }
   stages {
     stage('cdi-tck-build') {
@@ -84,7 +96,7 @@ spec:
             env
             bash -x ${WORKSPACE}/docker/run_cditck.sh
           """
-          archiveArtifacts artifacts: "cdi-tck-results.tar.gz,cdi-tck-report/**/*.xml,cdi-tck-report/**/*.html"
+          archiveArtifacts artifacts: "cdi-tck-results.tar.gz,cdi-tck-report/**/*.xml,cdi-tck-report/**/*.html,*.log"
           junit testResults: 'cdi-tck-report/**/*.xml', allowEmptyResults: true
         }
       }
