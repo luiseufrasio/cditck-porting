@@ -23,6 +23,8 @@ else
   exit 1
 fi
 
+export TS_HOME=${WORKSPACE}/cdi-tck-glassfish-porting
+
 #Install Glassfish
 echo "Download and install GlassFish ..."
 wget --progress=bar:force --no-cache $GF_BUNDLE_URL -O ${WORKSPACE}/latest-glassfish.zip
@@ -41,7 +43,7 @@ mkdir -p ${REPORT}/cdi-$VER
 cat ${WORKSPACE}/docker/CDI.policy >> ${WORKSPACE}/payara5/glassfish/domains/domain1/config/server.policy
 
 #Edit test properties
-sed -i "s#porting.home=.*#porting.home=${PORTING}#g" ${TS_HOME}/build.properties
+sed -i "s#porting.home=.*#porting.home=${TS_HOME}#g" ${TS_HOME}/build.properties
 sed -i "s#glassfish.home=.*#glassfish.home=${WORKSPACE}/payara5/glassfish#g" ${TS_HOME}/build.properties
 if [[ "${PROFILE}" == "web" || "${PROFILE}" == "WEB" ]]; then
   sed -i "s#javaee.level=.*#javaee.level=web#g" ${TS_HOME}/build.properties
