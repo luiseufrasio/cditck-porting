@@ -517,7 +517,7 @@
                         <arg value="--global-settings" />
 			            <arg value="${porting.home}/settings.xml" />
                         <arg value="dependency:get" />
-						<arg value="-DrepositoryUrl=https://jakarta.oss.sonatype.org/content/repositories/staging"/>
+						<arg value="-DrepositoryUrl=https://jakarta.oss.sonatype.org/content/repositories/releases"/>
 						<arg value="-DgroupId=jakarta.enterprise"/>
 						<arg value="-DartifactId=cdi-tck-ext-lib"/>
 						<arg value="-Dversion=${cdiext.version}"/>			
@@ -530,7 +530,7 @@
 			<arg value="/c"/>
                         <arg value="${maven.executable}.cmd"/>
                         <arg value="dependency:get"/>
-						<arg value="-DrepositoryUrl=https://jakarta.oss.sonatype.org/content/repositories/staging"/>
+						<arg value="-DrepositoryUrl=https://jakarta.oss.sonatype.org/content/repositories/releases"/>
 						<arg value="-DgroupId=jakarta.enterprise"/>
 						<arg value="-DartifactId=cdi-tck-ext-lib"/>
 						<arg value="-Dversion=${cdiext.version}"/>

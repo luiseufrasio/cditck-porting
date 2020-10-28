@@ -59,7 +59,7 @@
             <dependency>
                 <groupId>jakarta.xml.ws</groupId>
                 <artifactId>jakarta.xml.ws-api</artifactId>
-                <version>3.0.0-RC3</version> <!-- 2.3.3 is not in central yet -->
+                <version>3.0.0-RC3</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
