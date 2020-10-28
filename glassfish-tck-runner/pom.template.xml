@@ -2,8 +2,8 @@
 
     Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
     Copyright (c) 2019, 2020 Payara Foundation and/or its affiliates. All rights reserved.
-
-    This program and the accompanying materials are made available under the
+    
+	This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
     http://www.eclipse.org/legal/epl-2.0.
 
@@ -42,9 +42,9 @@
         <htmlunit.version>2.9</htmlunit.version>
         <shrinkwrap.version>1.0.1</shrinkwrap.version>
         <minimum.maven.version>3.0.5</minimum.maven.version>
-        <cdi.tck.version>2.0.6</cdi.tck.version>
+        <cdi.tck.version>3.0.0</cdi.tck.version>
         <httpcomponents.version>4.5.5</httpcomponents.version>
-        <arquillian.version>1.1.14.Final</arquillian.version>
+        <arquillian.version>1.6.0.Final</arquillian.version>
     </properties>
 
     <dependencyManagement>
@@ -59,16 +59,23 @@
             <dependency>
                 <groupId>jakarta.xml.ws</groupId>
                 <artifactId>jakarta.xml.ws-api</artifactId>
-                <version>2.3.2</version> <!-- 2.3.3 is not in central yet -->
+                <version>3.0.0-RC3</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
+
         <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>2.0</version>
+            <groupId>jakarta.interceptor</groupId>
+            <artifactId>jakarta.interceptor-api</artifactId>
+            <version>2.0.0-RC2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>3.0.0</version>
         </dependency>
 
         <dependency>
@@ -107,7 +114,7 @@
         <dependency>
             <groupId>org.glassfish.cdi</groupId>
             <artifactId>gf-cdi-porting-package-tck11</artifactId>
-            <version>2.0</version>
+            <version>3.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.jboss.weld</groupId>
@@ -117,23 +124,23 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.cdi.tck</groupId>
+            <groupId>jakarta.enterprise</groupId>
             <artifactId>cdi-tck-api</artifactId>
             <version>${cdi.tck.version}</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>el-api</artifactId>
-                    <groupId>javax.el</groupId>
+                    <artifactId>jakarta.el-api</artifactId>
+                    <groupId>jakarta.el</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>jsf-api</artifactId>
-                    <groupId>javax.faces</groupId>
+                    <artifactId>jakarta.faces-api</artifactId>
+                    <groupId>jakarta.faces</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.cdi.tck</groupId>
+            <groupId>jakarta.enterprise</groupId>
             <artifactId>cdi-tck-impl</artifactId>
             <version>${cdi.tck.version}</version>
             <type>xml</type>
@@ -141,12 +148,12 @@
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <artifactId>el-api</artifactId>
-                    <groupId>javax.el</groupId>
+                    <artifactId>jakarta.el-api</artifactId>
+                    <groupId>jakarta.el</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>jsf-api</artifactId>
-                    <groupId>javax.faces</groupId>
+                    <artifactId>jakarta.faces-api</artifactId>
+                    <groupId>jakarta.faces</groupId>
                 </exclusion>
                 <exclusion>
                     <artifactId>container-se-api</artifactId>
@@ -188,38 +195,27 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.cdi.tck</groupId>
-            <artifactId>cdi-tck-impl</artifactId>
-            <version>${cdi.tck.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>el-api</artifactId>
-                    <groupId>javax.el</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jsf-api</artifactId>
-                    <groupId>javax.faces</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>container-se-api</artifactId>
-                    <groupId>org.jboss.arquillian.container</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jaxrs-api</artifactId>
-                    <groupId>org.jboss.resteasy</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>org.glassfish</groupId>
-            <artifactId>javax.el</artifactId>
+            <artifactId>jakarta.el</artifactId>
+            <version>4.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.spec.javax.faces</groupId>
-            <artifactId>jboss-jsf-api_2.2_spec</artifactId>
+            <artifactId>jboss-jsf-api_2.3_spec</artifactId>
+            <version>3.0.0.SP04</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.faces</groupId>
+            <artifactId>jakarta.faces-api</artifactId>
+            <version>${cdi.tck.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish</groupId>
+                    <artifactId>jakarta.faces</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>
@@ -336,67 +332,7 @@
                 <dependency>
                     <groupId>fish.payara.arquillian</groupId>
                     <artifactId>arquillian-payara-server-remote</artifactId>
-                    <version>1.2</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.arquillian.protocol</groupId>
-                    <artifactId>arquillian-protocol-servlet</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </dependency>
-
-            </dependencies>
-            <build>
-                <resources>
-                    <resource>
-                        <directory>src/test/resources</directory>
-                    </resource>
-                    <resource>
-                        <directory>src/test/glassfish-managed</directory>
-                    </resource>
-                </resources>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.22.1</version>
-                        <configuration>
-                            <!--@excludedGroups@-->
-                            <excludedGroups>se</excludedGroups>
-                            <suiteXmlFiles>
-                                <suiteXmlFile>${project.build.directory}/cdi-tck-impl-suite.xml</suiteXmlFile>
-                            </suiteXmlFiles>
-                            <systemPropertyVariables>
-                                <arquillian.launch>weld</arquillian.launch>
-                                <org.jboss.cdi.tck.libraryDirectory>target/dependency/lib</org.jboss.cdi.tck.libraryDirectory>
-                                <org.jboss.cdi.tck.testDataSource>jdbc/__default</org.jboss.cdi.tck.testDataSource>
-                            </systemPropertyVariables>
-                            <systemProperties>
-                                <jacoco.agent>${jacoco.agent}</jacoco.agent>
-                                <additional.vm.args>${additional.vm.args}</additional.vm.args>
-                                <libPath>${project.build.outputDirectory}</libPath>
-                            </systemProperties>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>payara-managed</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-
-            <dependencies>
-                <dependency>
-                    <groupId>fish.payara.arquillian</groupId>
-                    <artifactId>arquillian-payara-server-managed</artifactId>
-                    <version>1.2</version>
+                    <version>2.3.1</version>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
@@ -429,6 +365,68 @@
                             <suiteXmlFiles>
                                 <suiteXmlFile>${project.build.directory}/cdi-tck-impl-suite.xml</suiteXmlFile>
                             </suiteXmlFiles>
+                            <systemPropertyVariables>
+                                <arquillian.launch>weld</arquillian.launch>
+                                <org.jboss.cdi.tck.libraryDirectory>target/dependency/lib</org.jboss.cdi.tck.libraryDirectory>
+                                <org.jboss.cdi.tck.testDataSource>jdbc/__default</org.jboss.cdi.tck.testDataSource>
+                            </systemPropertyVariables>
+                            <systemProperties>
+                                <jacoco.agent>${jacoco.agent}</jacoco.agent>
+                                <additional.vm.args>${additional.vm.args}</additional.vm.args>
+                                <libPath>${project.build.outputDirectory}</libPath>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>payara-managed</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <dependencies>
+                <dependency>
+                    <groupId>fish.payara.arquillian</groupId>
+                    <artifactId>arquillian-payara-server-managed</artifactId>
+                    <version>2.3.1</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.arquillian.protocol</groupId>
+                    <artifactId>arquillian-protocol-servlet</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </dependency>
+
+            </dependencies>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/test/resources</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/test/glassfish-managed</directory>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.22.1</version>
+                        <configuration>
+                            @excludedGroups@
+                            <suiteXmlFiles>
+                                <suiteXmlFile>${project.build.directory}/cdi-tck-impl-suite.xml</suiteXmlFile>
+                            </suiteXmlFiles>
+                            <additionalClasspathElements>
+                                <additionalClasspathElement>${env.DIST}/${env.CDI_TCK_DIST}/artifacts/cdi-tck-impl-${env.CDI_TCK_VERSION}.jar</additionalClasspathElement>
+                            </additionalClasspathElements>
                             <systemPropertyVariables>
                                 <arquillian.launch>weld</arquillian.launch>
                                 <org.jboss.cdi.tck.libraryDirectory>target/dependency/lib</org.jboss.cdi.tck.libraryDirectory>

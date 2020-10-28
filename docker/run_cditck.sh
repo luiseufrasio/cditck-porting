@@ -1,6 +1,6 @@
 #!/bin/bash -x -e
 #
-# Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, 2020 Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, 2020 Payara Foundation and/or its affiliates. All rights reserved.
 #
 # This program and the accompanying materials are made available under the
@@ -15,9 +15,7 @@
 #
 # SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
 
-
-
-VER="2.0.0"
+VER="3.0.0"
 if ls ${WORKSPACE}/bundles/*cdi-tck*.zip 1> /dev/null 2>&1; then
   unzip -o ${WORKSPACE}/bundles/*cdi-tck*.zip -d ${WORKSPACE}
 else
@@ -28,9 +26,10 @@ fi
 export TS_HOME=${WORKSPACE}/cdi-tck-glassfish-porting
 
 #Install Glassfish
-echo "Download and install GlassFish 5.0.1 ..."
-wget --progress=bar:force --no-cache $GF_BUNDLE_URL -O latest-glassfish.zip
-unzip -q -o ${WORKSPACE}/latest-glassfish.zip -d ${WORKSPACE}
+echo "Download and install GlassFish ..."
+wget --progress=bar:force --no-cache $GF_BUNDLE_URL -O ${WORKSPACE}/latest-glassfish.zip
+unzip -o ${WORKSPACE}/latest-glassfish.zip -d ${WORKSPACE}
+
 
 which ant
 ant -version
@@ -53,12 +52,20 @@ else
 fi
 sed -i "s#report.dir=.*#report.dir=${REPORT}#g" ${TS_HOME}/build.properties
 sed -i "s#admin.user=.*#admin.user=admin#g" ${TS_HOME}/build.properties
+sed -i "s#cdiextjar=.*#cdiextjar=cdi-tck-ext-lib-${CDI_TCK_VERSION}.jar#g" ${TS_HOME}/build.properties
+sed -i "s#cdiext.version=.*#cdiext.version=${CDI_TCK_VERSION}#g" ${TS_HOME}/build.properties
+
+cp ${TS_HOME}/glassfish-tck-runner/src/test/tck20/tck-tests.xml ${TS_HOME}/glassfish-tck-runner/src/test/tck20/tck-tests_bkup.xml 
+cp ${DIST}/${CDI_TCK_DIST}/artifacts/cdi-tck-impl-${CDI_TCK_VERSION}-suite.xml ${TS_HOME}/glassfish-tck-runner/src/test/tck20/tck-tests.xml
+
+sed -i "s#<suite name=.*#<suite name=\"CDI TCK\" verbose=\"0\" configfailurepolicy=\"continue\">#g" ${TS_HOME}/glassfish-tck-runner/src/test/tck20/tck-tests.xml
 
 #Run Tests
 cd ${TS_HOME}
 export MAVEN_OPTS="-Duser.home=$HOME $MAVEN_OPTS"
 ant -Duser.home=$HOME sigtest
 ant -Duser.home=$HOME test
+
 
 #Generate Reports
 echo "<pre>" > ${REPORT}/cdi-$VER-sig/report.html
@@ -73,35 +80,16 @@ if [[ -f ${REPORT}/cdi-$VER/test-report.html ]];then
 fi
 
 mv ${REPORT}/cdi-$VER/TEST-TestSuite.xml  ${REPORT}/cdi-$VER/cditck-$VER-junit-report.xml
-sed -i 's/name=\"TestSuite\"/name="cditck-2.0"/g' ${REPORT}/cdi-$VER/cditck-$VER-junit-report.xml
+sed -i 's/name=\"TestSuite\"/name="cditck-3.0"/g' ${REPORT}/cdi-$VER/cditck-$VER-junit-report.xml
 
 # Create Junit formated file for sigtests
-# Fill appropriate test counts
-if [ -f "$REPORT/cdi-$VER-sig/report.html" ]; then
-  if grep -q STATUS:Passed "$REPORT/cdi-$VER-sig/report.html"; then
-    cat > $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml << EOF
-<?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="1" failures="0" name="cdi-2.0.0-sig" time="0" errors="0" skipped="0">
-<testcase classname="CDISigTest" name="cdiSigTest" time="0.2">
-<system-out>
-`cat $REPORT/cdi_sig_test_results.txt`
-</system-out>
-</testcase>
-</testsuite>
-EOF
-  else 
-    cat > $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml << EOF
-<?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="1" failures="1" name="cdi-2.0.0-sig" time="0" errors="0" skipped="0">
-<testcase classname="CDISigTest" name="cdiSigTest" time="0.2" status="Failed">
-<failure type="AssertionFailure" message="Signature test failed">Signature test failed</failure>
-<system-out>
-`cat $REPORT/cdi_sig_test_results.txt`
-</system-out>
-</testcase>
-</testsuite>
-EOF
-  fi
-fi
+echo '<?xml version="1.0" encoding="UTF-8" ?>' > $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
+echo '<testsuite tests="TOTAL" failures="FAILED" name="cdi-3.0.0-sig" time="0" errors="0" skipped="0">' >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
+echo '<testcase classname="CDISigTest" name="cdiSigTest" time="0.2">' >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
+echo '  <system-out>' >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
+cat $REPORT/cdi_sig_test_results.txt >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
+echo '  </system-out>' >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
+echo '</testcase>' >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
+echo '</testsuite>' >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
 
 tar zcvf ${WORKSPACE}/cdi-tck-results.tar.gz ${REPORT} ${WORK}

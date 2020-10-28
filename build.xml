@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!--
 
-    Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
-    Copyright (c) 2019,2020 Payara Foundation and/or its affiliates. All rights reserved.
+    Copyright (c) 2018, 2020 Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2019, 2020 Payara Foundation and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -25,7 +25,7 @@
 
 	<property name="maven.executable" value="${env.M2_HOME}/bin/mvn" />
         <property name="pathsep" value="${path.separator}"/>
-        <property name="tck.version" value="2.0.0"/>
+        <property name="tck.version" value="3.0.0"/>
 	<property name="src" value="${basedir}/src" />
 	<property name="classes" value="${basedir}/classes" />
 	<property name="dist" value="${basedir}/dist" />
@@ -96,7 +96,7 @@
         
         <target name="run.all.tests" depends="sigtest, test"/>
 
-        <target name="test" depends="config.v4, copy.settingsxml, filter.arquillian.xml">
+        <target name="test" depends="config.v4, filter.arquillian.xml">
             
             <antcall target="start.javadb" />
             <delete file="${porting.home}/glassfish-tck-runner/pom.xml"/>
@@ -116,6 +116,7 @@
                     <mvn.test.win dir="glassfish-tck-runner"/>
                 </then>
                 <else>
+                    <echo message="################# Dependencies at: ${env.DIST}/${env.CDI_TCK_DIST}/artifacts/cdi-tck-impl-${env.CDI_TCK_VERSION}.jar #################"/>
                     <mvn.test dir="glassfish-tck-runner"/>
                 </else>
             </if>
@@ -130,7 +131,7 @@
                 <java outputproperty="sigoutput" fork="true" jar="${lib}/sigtest.jar">
 			<arg value="Signaturetest"/>
                         <arg value="-Classpath"/>
-                        <arg value="${java.home}/${java.classes.for.sig.ext}${pathsep}${glassfish.home}/modules/weld-osgi-bundle.jar${pathsep}${glassfish.home}/modules/jakarta.enterprise.cdi-api.jar${pathsep}${glassfish.home}/modules/jakarta.inject.jar${pathsep}${glassfish.home}/modules/jakarta.el.jar/${pathsep}${glassfish.home}/modules/jakarta.interceptor-api.jar${aix.jars}"/>
+                        <arg value="${java.home}/${java.classes.for.sig.ext}${pathsep}${glassfish.home}/modules/weld-osgi-bundle.jar${pathsep}${glassfish.home}/modules/jakarta.enterprise.cdi-api.jar${pathsep}${glassfish.home}/modules/jakarta.inject.jar${pathsep}${glassfish.home}/modules/jakarta.el.jar/${pathsep}${glassfish.home}/modules/jakarta.interceptor-api.jar${aix.jars}${pathsep}${glassfish.home}/modules/cdi-api-fragment.jar"/>
                         <arg value="-Package"/>
                         <arg value="javax.enterprise"/>
                         <arg value="-Package"/>
@@ -154,8 +155,8 @@
 	</target>
         <target name="copy.tck.ext.lib.jar">
 		    <echo message="Copying cdi-ext-lib jar"/>
-		    <copy file="${user.home}/.m2/repository/org/jboss/cdi/tck/cdi-tck-ext-lib/${cdiext.version}/${cdiextjar}" todir="${porting.home}/lib">
-			<!--globmapper from="cdi-tck-ext-lib-2.0.0.Alpha7.jar" to="cdi-tck-ext-lib.jar"/-->
+		    <copy file="${user.home}/.m2/repository/jakarta/enterprise/cdi-tck-ext-lib/${cdiext.version}/${cdiextjar}" 
+		    	todir="${porting.home}/lib">
 			</copy>
             <copy file="${porting.home}/lib/${cdiextjar}" todir="${glassfish.home}/domains/domain1/lib/applibs"
                   flatten="true" overwrite="true">
@@ -469,24 +470,30 @@
         
                
         <presetdef name="mvn.test">
-		<exec executable="${maven.executable}">
-			<arg value="-P" />
-                        <arg value="payara-managed" />
-                        <arg value="-U" />
-                        <arg value="clean" />
-                        <arg value="test" />                       
-                        <!--<arg value="-DtckTest=MessageDrivenBeanContextTest" />-->                      
-		</exec>
-	</presetdef>
+            <exec executable="${maven.executable}">
+                <arg value="--global-settings" />
+                <arg value="${porting.home}/settings.xml" />
+                <arg value="-P" />
+                <arg value="payara-managed" />
+                <arg value="-U" />
+                <arg value="clean" />
+                <arg value="test" />
+                <!--<arg value="dependency:tree" />
+                <arg value="-DtckTest=MessageDrivenBeanContextTest" />-->
+            </exec>
+	    </presetdef>
         
         <presetdef name="mvn.test.win">
 		<exec executable="cmd">
 			<arg value="/c"/>
                         <arg value="${maven.executable}.cmd"/>
+                        <arg value="--global-settings" />
+						<arg value="${porting.home}/settings.xml"/>
                         <arg value="-P" />
                         <arg value="payara-managed" />
                         <arg value="-U" />
                         <arg value="test" />
+                        <arg value="dependency:tree"/>
 		</exec>
 	</presetdef>
 	
@@ -507,13 +514,14 @@
 	</presetdef>
 	<presetdef name="mvn.dependency">
 		<exec executable="${maven.executable}">
-			
+                        <arg value="--global-settings" />
+			            <arg value="${porting.home}/settings.xml" />
                         <arg value="dependency:get" />
-						<arg value="-DrepositoryUrl=https://repo1.maven.org/maven2/"/>
-						<arg value="-DgroupId=org.jboss.cdi.tck"/>
+						<arg value="-DrepositoryUrl=https://jakarta.oss.sonatype.org/content/repositories/releases"/>
+						<arg value="-DgroupId=jakarta.enterprise"/>
 						<arg value="-DartifactId=cdi-tck-ext-lib"/>
-						<arg value="-Dversion=${cdiext.version}"/>						
-                        <!--<arg value="-DtckTest=MessageDrivenBeanContextTest" />-->                      
+						<arg value="-Dversion=${cdiext.version}"/>			
+                        <!-- <arg value="-DtckTest=MessageDrivenBeanContextTest" /> -->                      
 		</exec>
 	</presetdef>
         
@@ -522,8 +530,8 @@
 			<arg value="/c"/>
                         <arg value="${maven.executable}.cmd"/>
                         <arg value="dependency:get"/>
-						<arg value="-DrepositoryUrl=https://repo1.maven.org/maven2/"/>
-						<arg value="-DgroupId=org.jboss.cdi.tck"/>
+						<arg value="-DrepositoryUrl=https://jakarta.oss.sonatype.org/content/repositories/releases"/>
+						<arg value="-DgroupId=jakarta.enterprise"/>
 						<arg value="-DartifactId=cdi-tck-ext-lib"/>
 						<arg value="-Dversion=${cdiext.version}"/>
 		</exec>
