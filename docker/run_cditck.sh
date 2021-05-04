@@ -40,11 +40,11 @@ mkdir -p ${REPORT}/cdi-$VER-sig
 mkdir -p ${REPORT}/cdi-$VER
 
 #Edit Glassfish Security policy
-cat ${WORKSPACE}/docker/CDI.policy >> ${WORKSPACE}/payara5/glassfish/domains/domain1/config/server.policy
+cat ${WORKSPACE}/docker/CDI.policy >> ${WORKSPACE}/payara6/glassfish/domains/domain1/config/server.policy
 
 #Edit test properties
 sed -i "s#porting.home=.*#porting.home=${TS_HOME}#g" ${TS_HOME}/build.properties
-sed -i "s#glassfish.home=.*#glassfish.home=${WORKSPACE}/payara5/glassfish#g" ${TS_HOME}/build.properties
+sed -i "s#glassfish.home=.*#glassfish.home=${WORKSPACE}/payara6/glassfish#g" ${TS_HOME}/build.properties
 if [[ "${PROFILE}" == "web" || "${PROFILE}" == "WEB" ]]; then
   sed -i "s#javaee.level=.*#javaee.level=web#g" ${TS_HOME}/build.properties
 else

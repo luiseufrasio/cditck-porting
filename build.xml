@@ -133,9 +133,9 @@
                         <arg value="-Classpath"/>
                         <arg value="${java.home}/${java.classes.for.sig.ext}${pathsep}${glassfish.home}/modules/weld-osgi-bundle.jar${pathsep}${glassfish.home}/modules/jakarta.enterprise.cdi-api.jar${pathsep}${glassfish.home}/modules/jakarta.inject.jar${pathsep}${glassfish.home}/modules/jakarta.el.jar/${pathsep}${glassfish.home}/modules/jakarta.interceptor-api.jar${aix.jars}${pathsep}${glassfish.home}/modules/cdi-api-fragment.jar"/>
                         <arg value="-Package"/>
-                        <arg value="javax.enterprise"/>
+                        <arg value="jakarta.enterprise"/>
                         <arg value="-Package"/>
-                        <arg value="javax.decorator"/>
+                        <arg value="jakarta.decorator"/>
                         <arg value="-FileName"/>
                         <arg value="${sig.file}"/>
                         <arg value="-Static"/>
