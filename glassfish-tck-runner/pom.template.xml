@@ -204,7 +204,7 @@
         <dependency>
             <groupId>jakarta.faces</groupId>
             <artifactId>jakarta.faces-api</artifactId>
-            <version>${cdi.tck.version}</version>
+            <version>3.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.glassfish</groupId>
