@@ -72,7 +72,16 @@
             <artifactId>jakarta.interceptor-api</artifactId>
             <version>2.0.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-api</artifactId>
+            <version>2.0.1</version>
+        </dependency>
         <dependency>
             <groupId>jakarta.enterprise</groupId>
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
@@ -82,7 +91,6 @@
             <groupId>jakarta.faces</groupId>
             <artifactId>jakarta.faces-api</artifactId>
             <version>3.0.0</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.weld</groupId>
