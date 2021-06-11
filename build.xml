@@ -170,7 +170,7 @@
                   tofile="${porting.home}/glassfish-tck-runner/src/test/glassfish-managed/arquillian.xml">
                 <filterset>                  
                   <filter token="maxClassesRestart" value="${max.classes.restart}"/>
-                  <filter token="glassFishHome" value="${glassfish.home.base}"/>
+                  <filter token="payaraHome" value="${glassfish.home.base}"/>
                   <filter token="adminHost" value="${admin.host}"/>
                   <filter token="adminPort" value="${admin.port}"/>
                   <filter token="adminUser" value="${admin.user}"/>

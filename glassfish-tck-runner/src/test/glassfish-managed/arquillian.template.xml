@@ -30,7 +30,7 @@ http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
     <container qualifier="weld">
         <configuration>
             <!--<property name="enableConversationScope">true</property>-->
-            <property name="glassFishHome">@glassFishHome@</property>
+            <property name="payaraHome">@payaraHome@</property>
             <property name="adminHost">@adminHost@</property>
             <property name="adminPort">@adminPort@</property>
             <property name="adminUser">@adminUser@</property>
