@@ -21,7 +21,7 @@
     <parent>
         <artifactId>weld-core-parent</artifactId>
         <groupId>org.jboss.weld</groupId>
-        <version>3.0.3.Final</version>
+        <version>4.0.1.SP1</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -43,7 +43,7 @@
         <shrinkwrap.version>1.0.1</shrinkwrap.version>
         <minimum.maven.version>3.0.5</minimum.maven.version>
         <cdi.api.version>3.0.0</cdi.api.version>
-        <cdi.tck.version>3.0.1</cdi.tck.version>
+        <cdi.tck.version>3.0.2.SP1</cdi.tck.version>
         <httpcomponents.version>4.5.5</httpcomponents.version>
         <arquillian.version>1.6.0.Final</arquillian.version>
     </properties>
@@ -60,7 +60,7 @@
             <dependency>
                 <groupId>jakarta.xml.ws</groupId>
                 <artifactId>jakarta.xml.ws-api</artifactId>
-                <version>3.0.0</version>
+                <version>3.0.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -78,7 +78,12 @@
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
             <version>${cdi.api.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>jakarta.faces</groupId>
+            <artifactId>jakarta.faces-api</artifactId>
+            <version>3.0.0</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-core-impl</artifactId>
@@ -86,10 +91,6 @@
                 <exclusion>
                     <groupId>org.testng</groupId>
                     <artifactId>testng</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jboss.spec.javax.el</groupId>
-                    <artifactId>jboss-el-api_3.0_spec</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -200,13 +201,6 @@
             <artifactId>jakarta.el</artifactId>
             <version>4.0.0</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.jboss.spec.javax.faces</groupId>
-            <artifactId>jboss-jsf-api_2.3_spec</artifactId>
-            <version>3.0.0.SP04</version>
-        </dependency>
-
         <dependency>
             <groupId>jakarta.faces</groupId>
             <artifactId>jakarta.faces-api</artifactId>
@@ -274,7 +268,7 @@
                     <!-- added following dependenciesToScan -->
                     <!-- https://issues.apache.org/jira/browse/SUREFIRE-569 -->
                     <dependenciesToScan>
-                        <dependency>org.jboss.cdi.tck:cdi-tck-impl</dependency>
+                        <dependency>jakarta.enterprise:cdi-tck-impl</dependency>
                     </dependenciesToScan>
                 </configuration>
             </plugin>
@@ -333,7 +327,7 @@
                 <dependency>
                     <groupId>fish.payara.arquillian</groupId>
                     <artifactId>arquillian-payara-server-remote</artifactId>
-                    <version>2.3.1</version>
+                    <version>3.0.alpha1</version>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
@@ -392,7 +386,7 @@
                 <dependency>
                     <groupId>fish.payara.arquillian</groupId>
                     <artifactId>arquillian-payara-server-managed</artifactId>
-                    <version>2.3.1</version>
+                    <version>3.0.alpha1</version>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
