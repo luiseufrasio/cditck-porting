@@ -25,7 +25,7 @@
 
 	<property name="maven.executable" value="${env.M2_HOME}/bin/mvn" />
         <property name="pathsep" value="${path.separator}"/>
-        <property name="tck.version" value="3.0.1"/>
+        <property name="tck.version" value="3.0.2.SP1"/>
 	<property name="src" value="${basedir}/src" />
 	<property name="classes" value="${basedir}/classes" />
 	<property name="dist" value="${basedir}/dist" />
@@ -131,7 +131,7 @@
                 <java outputproperty="sigoutput" fork="true" jar="${lib}/sigtest.jar">
 			<arg value="Signaturetest"/>
                         <arg value="-Classpath"/>
-                        <arg value="${java.home}/${java.classes.for.sig.ext}${pathsep}${glassfish.home}/modules/weld-osgi-bundle.jar${pathsep}${glassfish.home}/modules/jakarta.enterprise.cdi-api.jar${pathsep}${glassfish.home}/modules/jakarta.inject.jar${pathsep}${glassfish.home}/modules/jakarta.el.jar/${pathsep}${glassfish.home}/modules/jakarta.interceptor-api.jar${aix.jars}${pathsep}${glassfish.home}/modules/cdi-api-fragment.jar"/>
+                        <arg value="${java.home}/${java.classes.for.sig.ext}${pathsep}${glassfish.home}/modules/weld-osgi-bundle.jar${pathsep}${glassfish.home}/modules/jakarta.enterprise.cdi-api.jar${pathsep}${glassfish.home}/modules/jakarta.inject-api.jar${pathsep}${glassfish.home}/modules/jakarta.el.jar/${pathsep}${glassfish.home}/modules/jakarta.interceptor-api.jar${aix.jars}${pathsep}${glassfish.home}/modules/cdi-api-fragment.jar"/>
                         <arg value="-Package"/>
                         <arg value="jakarta.enterprise"/>
                         <arg value="-Package"/>
@@ -478,8 +478,8 @@
                 <arg value="-U" />
                 <arg value="clean" />
                 <arg value="test" />
-                <!--<arg value="dependency:tree" />
-                <arg value="-DtckTest=MessageDrivenBeanContextTest" />-->
+                <arg value="dependency:tree" />
+                <!--<arg value="-DtckTest=MessageDrivenBeanContextTest" />-->
             </exec>
 	    </presetdef>
         
@@ -488,7 +488,7 @@
 			<arg value="/c"/>
                         <arg value="${maven.executable}.cmd"/>
                         <arg value="--global-settings" />
-						<arg value="${porting.home}/settings.xml"/>
+                        <arg value="${porting.home}/settings.xml"/>
                         <arg value="-P" />
                         <arg value="payara-managed" />
                         <arg value="-U" />

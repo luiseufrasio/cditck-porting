@@ -15,7 +15,7 @@
 #
 # SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
 
-VER="3.0.1"
+VER="3.0.2.SP1"
 if ls ${WORKSPACE}/bundles/*cdi-tck*.zip 1> /dev/null 2>&1; then
   unzip -o ${WORKSPACE}/bundles/*cdi-tck*.zip -d ${WORKSPACE}
 else
@@ -84,7 +84,7 @@ sed -i 's/name=\"TestSuite\"/name="cditck-3.0"/g' ${REPORT}/cdi-$VER/cditck-$VER
 
 # Create Junit formated file for sigtests
 echo '<?xml version="1.0" encoding="UTF-8" ?>' > $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
-echo '<testsuite tests="TOTAL" failures="FAILED" name="cdi-3.0.1-sig" time="0" errors="0" skipped="0">' >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
+echo '<testsuite tests="TOTAL" failures="FAILED" name="cdi-3.0.2.SP1-sig" time="0" errors="0" skipped="0">' >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
 echo '<testcase classname="CDISigTest" name="cdiSigTest" time="0.2">' >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
 echo '  <system-out>' >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
 cat $REPORT/cdi_sig_test_results.txt >> $REPORT/cdi-$VER-sig/cdi-$VER-sig-junit-report.xml
