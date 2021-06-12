@@ -278,12 +278,6 @@
                     <!-- http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4425695 -->
                     <argLine>-Xmx768m -Dsun.zip.disableMemoryMapping=true</argLine>
                     <forkMode>once</forkMode>
-                    <properties>
-                        <property>
-                            <name>usedefaultlisteners</name>
-                            <value>false</value>
-                        </property>
-                    </properties>
                     <!-- added following dependenciesToScan -->
                     <!-- https://issues.apache.org/jira/browse/SUREFIRE-569 -->
                     <dependenciesToScan>
