@@ -377,7 +377,7 @@
                         <configuration>
                             @excludedGroups@
                             <suiteXmlFiles>
-                                <suiteXmlFile>${project.build.directory}/cdi-tck-impl-suite.xml</suiteXmlFile>
+                                <suiteXmlFile>src/test/tck20/tck-tests.xml</suiteXmlFile>
                             </suiteXmlFiles>
                             <systemPropertyVariables>
                                 <arquillian.launch>weld</arquillian.launch>
