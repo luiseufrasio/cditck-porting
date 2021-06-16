@@ -38,6 +38,12 @@
                 </methods>
             </class>
 
+            <class name="org.jboss.cdi.tck.tests.deployment.packaging.bundledLibrary.LibraryInEarTest">
+                <methods>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
+
         </classes>
 
     </test>
