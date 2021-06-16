@@ -273,7 +273,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.1</version>
+                <version>3.0.0-M5</version>
                 <configuration>
                     <!-- http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4425695 -->
                     <argLine>-Xmx768m -Dsun.zip.disableMemoryMapping=true</argLine>
@@ -373,7 +373,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.22.1</version>
+                        <version>3.0.0-M5</version>
                         <configuration>
                             @excludedGroups@
                             <suiteXmlFiles>
@@ -432,7 +432,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.22.1</version>
+                        <version>3.0.0-M5</version>
                         <configuration>
                             @excludedGroups@
                             <suiteXmlFiles>
