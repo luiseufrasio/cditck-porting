@@ -43,7 +43,7 @@
         <shrinkwrap.version>1.0.1</shrinkwrap.version>
         <minimum.maven.version>3.0.5</minimum.maven.version>
         <cdi.api.version>3.0.0</cdi.api.version>
-        <cdi.tck.version>3.0.1</cdi.tck.version>
+        <cdi.tck.version>3.0.3</cdi.tck.version>
         <httpcomponents.version>4.5.5</httpcomponents.version>
         <arquillian.version>1.7.0.Alpha9</arquillian.version>
     </properties>
