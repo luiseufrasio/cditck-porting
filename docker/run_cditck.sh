@@ -1,6 +1,6 @@
 #!/bin/bash -x -e
 #
-# Copyright (c) 2018, 2020 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, 2021 Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, 2020 Payara Foundation and/or its affiliates. All rights reserved.
 #
 # This program and the accompanying materials are made available under the
@@ -16,6 +16,9 @@
 # SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
 
 VER="3.0.1"
+
+export JAVA_HOME=$JDK11_HOME
+
 if ls ${WORKSPACE}/bundles/*cdi-tck*.zip 1> /dev/null 2>&1; then
   unzip -o ${WORKSPACE}/bundles/*cdi-tck*.zip -d ${WORKSPACE}
 else
@@ -33,6 +36,11 @@ unzip -o ${WORKSPACE}/latest-glassfish.zip -d ${WORKSPACE}
 
 which ant
 ant -version
+
+export PATH=$JAVA_HOME/bin:$PATH
+
+which java
+java -version
 
 REPORT=${WORKSPACE}/cdi-tck-report
 
