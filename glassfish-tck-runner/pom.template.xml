@@ -1,6 +1,6 @@
 <!--
 
-    Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2018, 2021 Oracle and/or its affiliates. All rights reserved.
     Copyright (c) 2019, 2020 Payara Foundation and/or its affiliates. All rights reserved.
     
 	This program and the accompanying materials are made available under the
@@ -21,12 +21,12 @@
     <parent>
         <artifactId>weld-core-parent</artifactId>
         <groupId>org.jboss.weld</groupId>
-        <version>4.0.1.SP1</version>
+        <version>5.0.0.SP1</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>weld-payara-runner-tck11</artifactId>
-    <name>CDI TCK runner 3.0 for Weld (Payara)</name>
+    <artifactId>weld-payara-runner-tck</artifactId>
+    <name>CDI TCK runner 4.0 for Weld (Payara)</name>
     <description>Aggregates dependencies and runs the CDI TCK (both standalone and on GlassFish AS)</description>
 
     <licenses>
@@ -42,10 +42,11 @@
         <htmlunit.version>2.9</htmlunit.version>
         <shrinkwrap.version>1.0.1</shrinkwrap.version>
         <minimum.maven.version>3.0.5</minimum.maven.version>
-        <cdi.api.version>3.0.0</cdi.api.version>
-        <cdi.tck.version>3.0.3</cdi.tck.version>
+        <cdi.api.version>4.0.0</cdi.api.version>
+        <cdi.tck.version>4.0.1</cdi.tck.version>
         <httpcomponents.version>4.5.5</httpcomponents.version>
-        <arquillian.version>1.7.0.Alpha9</arquillian.version>
+        <arquillian.version>1.7.0.Alpha10</arquillian.version>
+        <jakarta.platform.version>10.0.0-RC1</jakarta.platform.version>
     </properties>
 
     <dependencyManagement>
@@ -66,16 +67,36 @@
     </dependencyManagement>
 
     <dependencies>
-
+        <!--jakarta dependencies for cdi tck api-->
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>2.1.0</version>
+        </dependency>
         <dependency>
             <groupId>jakarta.interceptor</groupId>
             <artifactId>jakarta.interceptor-api</artifactId>
+            <version>2.1.0-RC1</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.faces</groupId>
+            <artifactId>jakarta.faces-api</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.resource</groupId>
+            <artifactId>jakarta.resource-api</artifactId>
             <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>3.0.0</version>
+            <version>4.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>jakarta.json</groupId>
@@ -86,11 +107,6 @@
             <groupId>jakarta.enterprise</groupId>
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
             <version>${cdi.api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.faces</groupId>
-            <artifactId>jakarta.faces-api</artifactId>
-            <version>3.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.weld</groupId>
@@ -123,8 +139,8 @@
         </dependency>
         <dependency>
             <groupId>org.glassfish.cdi</groupId>
-            <artifactId>gf-cdi-porting-package-tck11</artifactId>
-            <version>3.0</version>
+            <artifactId>gf-cdi-porting-package-tck</artifactId>
+            <version>4.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.jboss.weld</groupId>
@@ -151,7 +167,7 @@
 
         <dependency>
             <groupId>jakarta.enterprise</groupId>
-            <artifactId>cdi-tck-impl</artifactId>
+            <artifactId>cdi-tck-core-impl</artifactId>
             <version>${cdi.tck.version}</version>
             <type>xml</type>
             <classifier>suite</classifier>
@@ -181,57 +197,44 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-            <version>4.4.9</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpcomponents.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>${httpcomponents.version}</version>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>cdi-tck-web-impl</artifactId>
+            <version>${cdi.tck.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>container-se-api</artifactId>
+                    <groupId>org.jboss.arquillian.container</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>jakarta.el</artifactId>
-            <version>4.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.jms</groupId>
-            <artifactId>jakarta.jms-api</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.resource</groupId>
-            <artifactId>jakarta.resource-api</artifactId>
-            <version>2.0.0</version>
-        </dependency> 
+
         <dependency>
             <groupId>org.glassfish.hk2</groupId>
             <artifactId>hk2-api</artifactId>
-            <version>3.0.2</version>
+            <version>3.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.inject</groupId>
             <artifactId>jersey-hk2</artifactId>
-            <version>3.0.2</version>
+            <version>3.1.0-M5</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
-            <version>3.0.2</version>
+            <version>3.1.0-M5</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-multipart</artifactId>
-            <version>3.0.2</version>
+            <version>3.1.0-M5</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.el</artifactId>
+            <version>5.0.0-M1</version>
+        </dependency>
     </dependencies>
 
 
@@ -249,7 +252,7 @@
                         </goals>
                         <configuration>
                             <includeGroupIds>org.glassfish.cdi</includeGroupIds>
-                            <includeArtifactIds>gf-cdi-porting-package-tck11</includeArtifactIds>
+                            <includeArtifactIds>gf-cdi-porting-package-tck</includeArtifactIds>
                             <stripVersion>true</stripVersion>
                             <overWriteReleases>true</overWriteReleases>
                             <outputDirectory>${project.build.directory}/dependency/lib</outputDirectory>
@@ -273,7 +276,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <version>2.19.1</version>
                 <configuration>
                     <!-- http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4425695 -->
                     <argLine>-Xmx768m -Dsun.zip.disableMemoryMapping=true</argLine>
@@ -287,7 +290,8 @@
                     <!-- added following dependenciesToScan -->
                     <!-- https://issues.apache.org/jira/browse/SUREFIRE-569 -->
                     <dependenciesToScan>
-                        <dependency>jakarta.enterprise:cdi-tck-impl</dependency>
+                        <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
+                        <dependency>jakarta.enterprise:cdi-tck-web-impl</dependency>
                     </dependenciesToScan>
                 </configuration>
             </plugin>
@@ -344,6 +348,16 @@
 
             <dependencies>
                 <dependency>
+                    <groupId>org.glassfish.jersey.inject</groupId>
+                    <artifactId>jersey-hk2</artifactId>
+                    <version>3.0.3.payara-p2</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.glassfish.hk2</groupId>
+                    <artifactId>hk2-locator</artifactId>
+                    <version>3.0.2</version>
+                </dependency>
+                <dependency>
                     <groupId>fish.payara.arquillian</groupId>
                     <artifactId>arquillian-payara-server-remote</artifactId>
                     <version>3.0.alpha1</version>
@@ -375,7 +389,7 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>3.0.0-M5</version>
                         <configuration>
-                            @excludedGroups@
+                            <excludedGroups>se</excludedGroups>
                             <suiteXmlFiles>
                                 <suiteXmlFile>src/test/tck20/tck-tests.xml</suiteXmlFile>
                             </suiteXmlFiles>
@@ -434,7 +448,7 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>3.0.0-M5</version>
                         <configuration>
-                            @excludedGroups@
+                            <excludedGroups>se</excludedGroups>
                             <suiteXmlFiles>
                                 <suiteXmlFile>src/test/tck20/tck-tests.xml</suiteXmlFile>
                             </suiteXmlFiles>
@@ -457,7 +471,9 @@
             </build>
         </profile>
     </profiles>
-    
+
+    <!-- TODO: Temporarily enable snapshot repository -->
+    <!-- This can be removed once an official releases available -->
     <repositories>
         <repository>
             <id>payara-nexus-artifacts</id>
@@ -468,6 +484,18 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <id>jakarta-snapshots</id>
+            <url>https://jakarta.oss.sonatype.org/content/repositories/staging/</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
+            <id>jboss</id>
+            <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
         </repository>
     </repositories>
 

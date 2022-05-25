@@ -1,6 +1,6 @@
 #!/bin/bash -x -e
 #
-# Copyright (c) 2018, 2020 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, 2022 Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, 2020 Payara Foundation and/or its affiliates. All rights reserved.
 #
 # This program and the accompanying materials are made available under the
@@ -16,9 +16,9 @@
 # SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
 
 echo "ANT_HOME=$ANT_HOME"
-echo "export JAVA_HOME=$JAVA_HOME"
 echo "export MAVEN_HOME=$MAVEN_HOME"
 echo "export PATH=$PATH"
+
 
 cd $WORKSPACE
 mkdir -p ${WORKSPACE}/bundles
