@@ -21,7 +21,6 @@ import java.util.List;
 import javax.enterprise.inject.spi.DefinitionException;
 import javax.enterprise.inject.spi.DeploymentException;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jboss.arquillian.container.spi.client.container.DeploymentExceptionTransformer;
 
 /**
@@ -48,18 +47,7 @@ public class GlassFishDeploymentExceptionTransformer implements DeploymentExcept
 
         // Arquillian sometimes returns InvocationException with nested AS7
         // exception and sometimes AS7 exception itself
-        @SuppressWarnings("unchecked")
-        List<Throwable> throwableList = ExceptionUtils.getThrowableList(throwable);
-        if (throwableList.size() < 1)
-            return throwable;
-
-        Throwable root = null;
-
-        if (throwableList.size() == 1) {
-            root = throwable;
-        } else {
-            root = ExceptionUtils.getRootCause(throwable);
-        }
+        Throwable root = throwable;
 
         if (root instanceof DeploymentException || root instanceof DefinitionException) {
             return root;

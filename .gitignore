@@ -10,3 +10,5 @@ latest-*.zip
 .project
 .settings/
 target
+.idea/
+
