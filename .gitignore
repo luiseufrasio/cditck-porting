@@ -5,7 +5,7 @@ latest-*.zip
 /bundles
 /cdi-tck-glassfish-porting
 /cdi-tck-report
-/payara5
+/payara6
 .classpath
 .project
 .settings/
