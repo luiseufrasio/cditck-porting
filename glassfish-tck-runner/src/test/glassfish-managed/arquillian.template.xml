@@ -36,9 +36,7 @@ http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
             <property name="adminUser">@adminUser@</property>
             <property name="adminPassword">@adminPassword@</property>
             <property name="debug">true</property>
-            <!-- after adding the fix of the jsf tests failures this property was set to pass some strange behaviour
-            from managed profile execution-->
-            <property name="allowConnectingToRunningServer">true</property>
+            <!--<property name="allowConnectingToRunningServer">true</property>-->
         </configuration>
     </container>
 
