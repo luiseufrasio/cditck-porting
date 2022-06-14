@@ -13,6 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
+// Portions Copyright [2022] [Payara Foundation and/or its affiliates]
 
 package org.jboss.weld.tck.glassfish;
 
@@ -21,7 +22,6 @@ import java.util.List;
 import jakarta.enterprise.inject.spi.DefinitionException;
 import jakarta.enterprise.inject.spi.DeploymentException;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jboss.arquillian.container.spi.client.container.DeploymentExceptionTransformer;
 
 /**
@@ -48,18 +48,7 @@ public class GlassFishDeploymentExceptionTransformer implements DeploymentExcept
 
         // Arquillian sometimes returns InvocationException with nested AS7
         // exception and sometimes AS7 exception itself
-        @SuppressWarnings("unchecked")
-        List<Throwable> throwableList = ExceptionUtils.getThrowableList(throwable);
-        if (throwableList.size() < 1)
-            return throwable;
-
-        Throwable root = null;
-
-        if (throwableList.size() == 1) {
-            root = throwable;
-        } else {
-            root = ExceptionUtils.getRootCause(throwable);
-        }
+        Throwable root = throwable;
 
         if (root instanceof DeploymentException || root instanceof DefinitionException) {
             return root;
