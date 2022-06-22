@@ -51,12 +51,6 @@
         </or>
     </condition>
 
-    <condition property="excluded.groups" value="&lt;excludedGroups&gt;javaee-full,se&lt;/excludedGroups&gt;"
-               else="&lt;excludedGroups&gt;se&lt;/excludedGroups&gt;">
-        <equals arg1="${javaee.level}" arg2="web" trim="true"/>
-    </condition>
-
-
     <condition property="aix.jars" value="${pathsep}${java.home}/lib/annotation.jar${pathsep}${java.home}/lib/vm.jar"
                else="">
         <and>
@@ -92,6 +86,7 @@
             </or>
             <then>
                 <mvn.test.win dir="glassfish-tck-runner"/>
+                <mvn.dependency-tree.win dir="glassfish-tck-runner"/>
             </then>
             <else>
                 <echo message="################# Dependencies at: ${env.DIST}/${env.CDI_TCK_DIST}/artifacts/cdi-tck-impl-${env.CDI_TCK_VERSION}.jar #################"/>
@@ -449,40 +444,74 @@
         <stop.domain/>
     </target>
 
+    <presetdef name="determine.mvn.profiles">
+        <if>
+            <equals arg1="${javaee.level}" arg2="core" trim="true"/>
+            <then>
+                <echo message="Testing Core Profile"/>
+                <property name="profiles" value="payara-managed,core"/>
+            </then>
+            <elseif>
+                <equals arg1="${javaee.level}" arg2="web" trim="true"/>
+                <then>
+                    <echo message="Testing Web Profile"/>
+                    <property name="profiles" value="payara-managed,web"/>
+                </then>
+            </elseif>
+            <else>
+                <echo message="Testing Platform (Full Profile)"/>
+                <property name="profiles" value="payara-managed,platform"/>
+            </else>
+        </if>
+    </presetdef>
 
     <presetdef name="mvn.test">
+        <determine.mvn.profiles/>
         <exec executable="${maven.executable}">
             <arg value="--global-settings"/>
             <arg value="${porting.home}/settings.xml"/>
             <arg value="-P"/>
-            <arg value="payara-managed"/>
+            <arg value="${profiles}"/>
             <arg value="-U"/>
             <arg value="clean"/>
             <arg value="test"/>
-            <arg value="dependency:tree"/>
         </exec>
     </presetdef>
 
     <presetdef name="mvn.dependency-tree">
+        <determine.mvn.profiles/>
         <exec executable="${maven.executable}">
             <arg value="--global-settings"/>
             <arg value="${porting.home}/settings.xml"/>
             <arg value="-P"/>
-            <arg value="payara-managed"/>
+            <arg value="${profiles}"/>
             <arg value="dependency:tree"/>
         </exec>
     </presetdef>
 
     <presetdef name="mvn.test.win">
+        <determine.mvn.profiles/>
         <exec executable="cmd">
             <arg value="/c"/>
             <arg value="${maven.executable}.cmd"/>
             <arg value="--global-settings"/>
             <arg value="${porting.home}/settings.xml"/>
             <arg value="-P"/>
-            <arg value="payara-managed"/>
+            <arg value="${profiles}"/>
             <arg value="-U"/>
             <arg value="test"/>
+        </exec>
+    </presetdef>
+
+    <presetdef name="mvn.dependency-tree.win">
+        <determine.mvn.profiles/>
+        <exec executable="cmd">
+            <arg value="/c"/>
+            <arg value="${maven.executable}.cmd"/>
+            <arg value="--global-settings"/>
+            <arg value="${porting.home}/settings.xml"/>
+            <arg value="-P"/>
+            <arg value="${profiles}"/>
             <arg value="dependency:tree"/>
         </exec>
     </presetdef>
