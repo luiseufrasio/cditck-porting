@@ -60,7 +60,9 @@ cat ${WORKSPACE}/docker/CDI.policy >> ${WORKSPACE}/payara6/glassfish/domains/dom
 #Edit test properties
 sed -i "s#porting.home=.*#porting.home=${TS_HOME}#g" ${TS_HOME}/build.properties
 sed -i "s#glassfish.home=.*#glassfish.home=${WORKSPACE}/payara6/glassfish#g" ${TS_HOME}/build.properties
-if [[ "${PROFILE}" == "web" || "${PROFILE}" == "WEB" ]]; then
+if [[ "${PROFILE}" == "core" || "${PROFILE}" == "CORE" ]]; then
+  sed -i "s#javaee.level=.*#javaee.level=core#g" ${TS_HOME}/build.properties
+elif [[ "${PROFILE}" == "web" || "${PROFILE}" == "WEB" ]]; then
   sed -i "s#javaee.level=.*#javaee.level=web#g" ${TS_HOME}/build.properties
 else
   sed -i "s#javaee.level=.*#javaee.level=full#g" ${TS_HOME}/build.properties
