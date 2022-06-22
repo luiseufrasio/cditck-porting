@@ -11,4 +11,4 @@ latest-*.zip
 .settings/
 target
 .idea/
-
+*.iml
