@@ -43,14 +43,6 @@
 
     <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${lib}/ant-contrib.jar"/>
 
-    <condition property="max.classes.restart" value="10"
-               else="40">
-        <or>
-            <os family="windows"/>
-            <os family="dos"/>
-        </or>
-    </condition>
-
     <condition property="aix.jars" value="${pathsep}${java.home}/lib/annotation.jar${pathsep}${java.home}/lib/vm.jar"
                else="">
         <and>
@@ -143,7 +135,6 @@
         <copy file="${porting.home}/glassfish-tck-runner/src/test/glassfish-managed/arquillian.template.xml"
               tofile="${porting.home}/glassfish-tck-runner/src/test/glassfish-managed/arquillian.xml">
             <filterset>
-                <filter token="maxClassesRestart" value="${max.classes.restart}"/>
                 <filter token="payaraHome" value="${glassfish.home.base}"/>
                 <filter token="adminHost" value="${admin.host}"/>
                 <filter token="adminPort" value="${admin.port}"/>
