@@ -393,6 +393,10 @@
                                 <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
                                 <dependency>jakarta.enterprise:cdi-tck-web-impl</dependency>
                             </dependenciesToScan>
+                            <excludes>
+                                <exclude>org.jboss.cdi.tck.tests.event.observer.transactional.roolback.TransactionalObserverRollbackTest</exclude>
+                                <exclude>org.jboss.cdi.tck.tests.deployment.packaging.ejb.EJBJarDeploymentTest</exclude>
+                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -430,6 +434,10 @@
                                 <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
                                 <dependency>jakarta.enterprise:cdi-tck-web-impl</dependency>
                             </dependenciesToScan>
+                            <excludes>
+                                <exclude>org.jboss.cdi.tck.tests.event.observer.transactional.roolback.TransactionalObserverRollbackTest</exclude>
+                                <exclude>org.jboss.cdi.tck.tests.deployment.packaging.ejb.EJBJarDeploymentTest</exclude>
+                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>
