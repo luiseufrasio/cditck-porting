@@ -270,9 +270,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <suiteXmlFiles>
-                        <suiteXmlFile>src/test/tck20/tck-tests.xml</suiteXmlFile>
-                    </suiteXmlFiles>
                     <!-- http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4425695 -->
                     <argLine>-Xmx768m -Dsun.zip.disableMemoryMapping=true</argLine>
                     <forkMode>once</forkMode>
@@ -351,6 +348,9 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>src/test/tck20/tck-tests-core.xml</suiteXmlFile>
+                            </suiteXmlFiles>
                             <excludedGroups>cdi-full,se</excludedGroups>
                             <dependenciesToScan>
                                 <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
@@ -386,15 +386,14 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>src/test/tck20/tck-tests.xml</suiteXmlFile>
+                            </suiteXmlFiles>
                             <excludedGroups>javaee-full,se</excludedGroups>
                             <dependenciesToScan>
                                 <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
                                 <dependency>jakarta.enterprise:cdi-tck-web-impl</dependency>
                             </dependenciesToScan>
-                            <excludes>
-                                <exclude>org.jboss.cdi.tck.tests.event.observer.transactional.roolback.TransactionalObserverRollbackTest</exclude>
-                                <exclude>org.jboss.cdi.tck.tests.deployment.packaging.ejb.EJBJarDeploymentTest</exclude>
-                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -427,15 +426,14 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>src/test/tck20/tck-tests.xml</suiteXmlFile>
+                            </suiteXmlFiles>
                             <excludedGroups>se</excludedGroups>
                             <dependenciesToScan>
                                 <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
                                 <dependency>jakarta.enterprise:cdi-tck-web-impl</dependency>
                             </dependenciesToScan>
-                            <excludes>
-                                <exclude>org.jboss.cdi.tck.tests.event.observer.transactional.roolback.TransactionalObserverRollbackTest</exclude>
-                                <exclude>org.jboss.cdi.tck.tests.deployment.packaging.ejb.EJBJarDeploymentTest</exclude>
-                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>
