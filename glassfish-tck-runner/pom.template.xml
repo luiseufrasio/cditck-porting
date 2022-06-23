@@ -168,8 +168,6 @@
             <groupId>jakarta.enterprise</groupId>
             <artifactId>cdi-tck-core-impl</artifactId>
             <version>${cdi.tck.version}</version>
-            <type>xml</type>
-            <classifier>suite</classifier>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
