@@ -48,7 +48,18 @@ public class GlassFishDeploymentExceptionTransformer implements DeploymentExcept
 
         // Arquillian sometimes returns InvocationException with nested AS7
         // exception and sometimes AS7 exception itself
-        Throwable root = throwable;
+        @SuppressWarnings("unchecked")
+        List<Throwable> throwableList = ExceptionUtils.getThrowableList(throwable);
+        if (throwableList.size() < 1)
+            return throwable;
+
+        Throwable root = null;
+
+        if (throwableList.size() == 1) {
+            root = throwable;
+        } else {
+            root = ExceptionUtils.getRootCause(throwable);
+        }
 
         if (root instanceof DeploymentException || root instanceof DefinitionException) {
             return root;
