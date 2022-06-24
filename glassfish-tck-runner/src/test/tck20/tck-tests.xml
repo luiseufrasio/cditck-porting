@@ -36,6 +36,30 @@
                     <exclude name=".*"/>
                 </methods>
             </class>
+
+            <!-- https://github.com/jakartaee/cdi-tck/issues/389 -->
+	    <class name="org.jboss.cdi.tck.tests.context.application.async.ApplicationContextAsyncListenerTest">
+	        <methods>
+		    <exclude name="testApplicationContextActiveOnError"/>
+		</methods>
+	    </class>
+	    <class name="org.jboss.cdi.tck.tests.context.conversation.determination.ConversationDeterminationTest">
+                <methods>
+                    <exclude name="testConversationDetermination"/>
+                </methods>
+            </class>
+	    <class name="org.jboss.cdi.tck.tests.context.request.async.RequestContextAsyncListenerTest">
+                <methods>
+                    <exclude name="testRequestContextActiveOnError"/>
+                </methods>
+            </class>
+	    <class name="org.jboss.cdi.tck.tests.context.session.async.SessionContextAsyncListenerTest">
+                <methods>
+                    <exclude name="testSessionContextActiveOnError"/>
+                </methods>
+            </class>
+
+
         </classes>
     </test>
 
