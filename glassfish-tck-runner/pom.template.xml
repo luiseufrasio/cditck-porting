@@ -168,8 +168,6 @@
             <groupId>jakarta.enterprise</groupId>
             <artifactId>cdi-tck-core-impl</artifactId>
             <version>${cdi.tck.version}</version>
-            <type>xml</type>
-            <classifier>suite</classifier>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -194,10 +192,9 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>jakarta.enterprise</groupId>
-            <artifactId>cdi-tck-web-impl</artifactId>
+            <artifactId>cdi-tck-lang-model</artifactId>
             <version>${cdi.tck.version}</version>
             <scope>test</scope>
             <exclusions>
@@ -207,7 +204,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
 
         <dependency>
             <groupId>org.glassfish.hk2</groupId>
@@ -236,8 +232,18 @@
         </dependency>
     </dependencies>
 
-
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M6</version>
+                </plugin>
+            </plugins>
+
+        </pluginManagement>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -275,7 +281,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
                 <configuration>
                     <!-- http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4425695 -->
                     <argLine>-Xmx768m -Dsun.zip.disableMemoryMapping=true</argLine>
@@ -286,12 +291,16 @@
                             <value>false</value>
                         </property>
                     </properties>
-                    <!-- added following dependenciesToScan -->
-                    <!-- https://issues.apache.org/jira/browse/SUREFIRE-569 -->
-                    <dependenciesToScan>
-                        <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
-                        <dependency>jakarta.enterprise:cdi-tck-web-impl</dependency>
-                    </dependenciesToScan>
+                    <systemPropertyVariables>
+                        <arquillian.launch>weld</arquillian.launch>
+                        <org.jboss.cdi.tck.libraryDirectory>target/dependency/lib</org.jboss.cdi.tck.libraryDirectory>
+                        <org.jboss.cdi.tck.testDataSource>jdbc/__default</org.jboss.cdi.tck.testDataSource>
+                    </systemPropertyVariables>
+                    <systemProperties>
+                        <jacoco.agent>${jacoco.agent}</jacoco.agent>
+                        <additional.vm.args>${additional.vm.args}</additional.vm.args>
+                        <libPath>${project.build.outputDirectory}</libPath>
+                    </systemProperties>
                 </configuration>
             </plugin>
             <plugin>
@@ -342,6 +351,106 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>core</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>src/test/tck20/tck-tests-core.xml</suiteXmlFile>
+                            </suiteXmlFiles>
+                            <excludedGroups>cdi-full,se</excludedGroups>
+                            <dependenciesToScan>
+                                <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
+                            </dependenciesToScan>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>web</id>
+
+            <!-- Pull in the additional TCK artefact and scan it -->
+            <dependencies>
+                <dependency>
+                    <groupId>jakarta.enterprise</groupId>
+                    <artifactId>cdi-tck-web-impl</artifactId>
+                    <version>${cdi.tck.version}</version>
+                    <scope>test</scope>
+                    <exclusions>
+                        <exclusion>
+                            <artifactId>container-se-api</artifactId>
+                            <groupId>org.jboss.arquillian.container</groupId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>src/test/tck20/tck-tests.xml</suiteXmlFile>
+                            </suiteXmlFiles>
+                            <excludedGroups>javaee-full,se</excludedGroups>
+                            <dependenciesToScan>
+                                <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
+                                <dependency>jakarta.enterprise:cdi-tck-web-impl</dependency>
+                            </dependenciesToScan>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+        <profile>
+            <id>platform</id>
+
+            <!-- Pull in the additional TCK artefact and scan it -->
+            <dependencies>
+                <dependency>
+                    <groupId>jakarta.enterprise</groupId>
+                    <artifactId>cdi-tck-web-impl</artifactId>
+                    <version>${cdi.tck.version}</version>
+                    <scope>test</scope>
+                    <exclusions>
+                        <exclusion>
+                            <artifactId>container-se-api</artifactId>
+                            <groupId>org.jboss.arquillian.container</groupId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>src/test/tck20/tck-tests.xml</suiteXmlFile>
+                            </suiteXmlFiles>
+                            <excludedGroups>se</excludedGroups>
+                            <dependenciesToScan>
+                                <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
+                                <dependency>jakarta.enterprise:cdi-tck-web-impl</dependency>
+                            </dependenciesToScan>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
         <profile>
             <id>payara-remote</id>
@@ -383,29 +492,6 @@
                         <directory>src/test/glassfish-managed</directory>
                     </resource>
                 </resources>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.0.0-M5</version>
-                        <configuration>
-                            <excludedGroups>se</excludedGroups>
-                            <suiteXmlFiles>
-                                <suiteXmlFile>src/test/tck20/tck-tests.xml</suiteXmlFile>
-                            </suiteXmlFiles>
-                            <systemPropertyVariables>
-                                <arquillian.launch>weld</arquillian.launch>
-                                <org.jboss.cdi.tck.libraryDirectory>target/dependency/lib</org.jboss.cdi.tck.libraryDirectory>
-                                <org.jboss.cdi.tck.testDataSource>jdbc/__default</org.jboss.cdi.tck.testDataSource>
-                            </systemPropertyVariables>
-                            <systemProperties>
-                                <jacoco.agent>${jacoco.agent}</jacoco.agent>
-                                <additional.vm.args>${additional.vm.args}</additional.vm.args>
-                                <libPath>${project.build.outputDirectory}</libPath>
-                            </systemProperties>
-                        </configuration>
-                    </plugin>
-                </plugins>
             </build>
         </profile>
 
@@ -497,43 +583,10 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.0.0-M5</version>
                         <configuration>
-                            <!--core profile-->
-                            <excludedGroups>cdi-full,se</excludedGroups>
-                            <dependenciesToScan>
-                                <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
-                            </dependenciesToScan>
-
-                            <!--web profile-->
-                            <!--excludedGroups>javaee-full,se</excludedGroups>
-                            <dependenciesToScan>
-                                <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
-                                <dependency>jakarta.enterprise:cdi-tck-web-impl</dependency>
-                            </dependenciesToScan-->
-
-                            <!-- Jakarta EE full -->
-                            <!--excludedGroups>se</excludedGroups-->
-                            <!--dependenciesToScan>
-                                <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
-                                <dependency>jakarta.enterprise:cdi-tck-web-impl</dependency>
-                            </dependenciesToScan-->
-                            <suiteXmlFiles>
-                                <suiteXmlFile>src/test/tck20/tck-tests.xml</suiteXmlFile>
-                            </suiteXmlFiles>
                             <additionalClasspathElements>
                                 <additionalClasspathElement>${env.DIST}/${env.CDI_TCK_DIST}/artifacts/cdi-tck-impl-${env.CDI_TCK_VERSION}.jar</additionalClasspathElement>
                             </additionalClasspathElements>
-                            <systemPropertyVariables>
-                                <arquillian.launch>weld</arquillian.launch>
-                                <org.jboss.cdi.tck.libraryDirectory>target/dependency/lib</org.jboss.cdi.tck.libraryDirectory>
-                                <org.jboss.cdi.tck.testDataSource>jdbc/__default</org.jboss.cdi.tck.testDataSource>
-                            </systemPropertyVariables>
-                            <systemProperties>
-                                <jacoco.agent>${jacoco.agent}</jacoco.agent>
-                                <additional.vm.args>${additional.vm.args}</additional.vm.args>
-                                <libPath>${project.build.outputDirectory}</libPath>
-                            </systemProperties>
                         </configuration>
                     </plugin>
                 </plugins>

@@ -20,118 +20,104 @@
 
 <project name="CDI TCK Glassfish Porting" default="dist" basedir=".">
 
-    <property environment="env" />
-    <property file="${basedir}/build.properties" />
+    <property environment="env"/>
+    <property file="${basedir}/build.properties"/>
 
-	<property name="maven.executable" value="${env.M2_HOME}/bin/mvn" />
-	<property name="pathsep" value="${path.separator}"/>
-	<property name="portingkit.version" value="3.0.2"/>
-	<property name="src" value="${basedir}/src" />
-	<property name="classes" value="${basedir}/classes" />
-	<property name="dist" value="${basedir}/dist" />
-	<property name="lib" value="${basedir}/lib" />
-	<property name="dist.file" value="cdi-tck-payara-porting" />
-	<property name="admin.port" value="4848"/>
-	<property name="admin.host" value="localhost"/>
-	<property name="javadb.home" value="${glassfish.home}/../javadb"/>
-        <property name="javadb.host" value="localhost"/>
-        <property name="javadb.port" value="1527"/>
-        <!-- number of seconds to wait for the v4 admin port to be available -->
-    <property name="wait.for.v4" value="90"/> 
-    <property name="sig.file" value="${porting.home}/cdi-tck-impl-sigtest.sig" />
+    <property name="maven.executable" value="${env.M2_HOME}/bin/mvn"/>
+    <property name="pathsep" value="${path.separator}"/>
+    <property name="portingkit.version" value="3.0.2"/>
+    <property name="src" value="${basedir}/src"/>
+    <property name="classes" value="${basedir}/classes"/>
+    <property name="dist" value="${basedir}/dist"/>
+    <property name="lib" value="${basedir}/lib"/>
+    <property name="dist.file" value="cdi-tck-payara-porting"/>
+    <property name="admin.port" value="4848"/>
+    <property name="admin.host" value="localhost"/>
+    <property name="javadb.home" value="${glassfish.home}/../javadb"/>
+    <property name="javadb.host" value="localhost"/>
+    <property name="javadb.port" value="1527"/>
+    <!-- number of seconds to wait for the v4 admin port to be available -->
+    <property name="wait.for.v4" value="90"/>
+    <property name="sig.file" value="${porting.home}/cdi-tck-impl-sigtest.sig"/>
 
-        
-        <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${lib}/ant-contrib.jar" />
 
-        <condition property="max.classes.restart" value="10"
-                                   else="40">    
+    <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${lib}/ant-contrib.jar"/>
+
+    <condition property="aix.jars" value="${pathsep}${java.home}/lib/annotation.jar${pathsep}${java.home}/lib/vm.jar"
+               else="">
+        <and>
+            <available file="${java.home}/lib/annotation.jar"/>
+            <available file="${java.home}/lib/vm.jar"/>
+        </and>
+    </condition>
+
+    <!--Get Glassfish install dir base (minus the glassfish dir) -->
+    <propertyregex property="glassfish.home.base"
+                   input="${glassfish.home}"
+                   regexp="(.*)[\/|\\]glassfish"
+                   select="\1"
+                   defaultValue="${glassfish.home}"/>
+
+    <target name="run.all.tests" depends="sigtest, test"/>
+
+    <target name="test" depends="config.v4, filter.arquillian.xml, determine.mvn.profiles">
+
+        <antcall target="start.javadb"/>
+        <delete file="${porting.home}/glassfish-tck-runner/pom.xml"/>
+        <copy file="${porting.home}/glassfish-tck-runner/pom.template.xml"
+              tofile="${porting.home}/glassfish-tck-runner/pom.xml">
+            <filterset>
+                <filter token="excludedGroups" value="${excluded.groups}"/>
+            </filterset>
+        </copy>
+
+        <if>
             <or>
                 <os family="windows"/>
                 <os family="dos"/>
-            </or>     
-        </condition>
-        
-        <condition property="excluded.groups" value="&lt;excludedGroups&gt;javaee-full,se&lt;/excludedGroups&gt;"
-                                   else="&lt;excludedGroups&gt;se&lt;/excludedGroups&gt;">    
-            <equals arg1="${javaee.level}" arg2="web" trim="true"/>    
-        </condition>
-       
-        
+            </or>
+            <then>
+                <mvn.test.win dir="glassfish-tck-runner"/>
+                <mvn.dependency-tree.win dir="glassfish-tck-runner"/>
+            </then>
+            <else>
+                <echo message="################# Dependencies at: ${env.DIST}/${env.CDI_TCK_DIST}/artifacts/cdi-tck-impl-${env.CDI_TCK_VERSION}.jar #################"/>
+                <mvn.test dir="glassfish-tck-runner"/>
+                <mvn.dependency-tree dir="glassfish-tck-runner"/>
+            </else>
+        </if>
 
-        <condition property="aix.jars" value="${pathsep}${java.home}/lib/annotation.jar${pathsep}${java.home}/lib/vm.jar"
-                                       else="">
-            <and>
-                <available file="${java.home}/lib/annotation.jar"/>
-                <available file="${java.home}/lib/vm.jar"/>
-            </and>
-        </condition>
-        
-        <!--Get Glassfish install dir base (minus the glassfish dir) -->
-        <propertyregex property="glassfish.home.base"
-                       input="${glassfish.home}"
-                       regexp="(.*)[\/|\\]glassfish"
-                       select="\1"
-                       defaultValue="${glassfish.home}"/>
-        
-        <target name="run.all.tests" depends="sigtest, test"/>
-
-        <target name="test" depends="config.v4, filter.arquillian.xml">
-            
-            <antcall target="start.javadb" />
-            <delete file="${porting.home}/glassfish-tck-runner/pom.xml"/>
-            <copy file="${porting.home}/glassfish-tck-runner/pom.template.xml"
-                  tofile="${porting.home}/glassfish-tck-runner/pom.xml">
-                <filterset>                  
-                  <filter token="excludedGroups" value="${excluded.groups}"/>
-                </filterset>
-            </copy>
-            
-            <if>
-                <or>
-                 <os family="windows"/>
-                 <os family="dos"/>
-                </or>
-                <then>
-                    <mvn.test.win dir="glassfish-tck-runner"/>
-                </then>
-                <else>
-                    <echo message="################# Dependencies at: ${env.DIST}/${env.CDI_TCK_DIST}/artifacts/cdi-tck-impl-${env.CDI_TCK_VERSION}.jar #################"/>
-                    <mvn.test dir="glassfish-tck-runner"/>
-                    <mvn.dependency-tree dir="glassfish-tck-runner"/>
-                </else>
-            </if>
-            
-            <antcall target="stop.javadb" />     
+        <antcall target="stop.javadb"/>
     </target>
 
     <target name="sigtest">
         <echo message="Java Specification Version in use:  ${java.specification.version}"/>
-                <echo message="Java Home:  ${java.home}"/>
-                   
-                <java outputproperty="sigoutput" fork="true" jar="${lib}/sigtest.jar">
+        <echo message="Java Home:  ${java.home}"/>
+
+        <java outputproperty="sigoutput" fork="true" jar="${lib}/sigtest.jar">
             <arg value="Signaturetest"/>
-                        <arg value="-Classpath"/>
-                        <arg value="${java.home}/${java.classes.for.sig.ext}${pathsep}${glassfish.home}/modules/weld-osgi-bundle.jar${pathsep}${glassfish.home}/modules/jakarta.enterprise.cdi-api.jar${pathsep}${glassfish.home}/modules/jakarta.inject-api.jar${pathsep}${glassfish.home}/modules/jakarta.el.jar/${pathsep}${glassfish.home}/modules/jakarta.interceptor-api.jar${aix.jars}${pathsep}${glassfish.home}/modules/cdi-api-fragment.jar"/>
-                        <arg value="-Package"/>
-                        <arg value="jakarta.enterprise"/>
-                        <arg value="-Package"/>
-                        <arg value="jakarta.decorator"/>
-                        <arg value="-FileName"/>
-                        <arg value="${sig.file}"/>
-                        <arg value="-Static"/>
+            <arg value="-Classpath"/>
+            <arg value="${java.home}/${java.classes.for.sig.ext}${pathsep}${glassfish.home}/modules/weld-osgi-bundle.jar${pathsep}${glassfish.home}/modules/jakarta.enterprise.cdi-api.jar${pathsep}${glassfish.home}/modules/jakarta.inject-api.jar${pathsep}${glassfish.home}/modules/jakarta.el.jar/${pathsep}${glassfish.home}/modules/jakarta.interceptor-api.jar${aix.jars}${pathsep}${glassfish.home}/modules/cdi-api-fragment.jar"/>
+            <arg value="-Package"/>
+            <arg value="jakarta.enterprise"/>
+            <arg value="-Package"/>
+            <arg value="jakarta.decorator"/>
+            <arg value="-FileName"/>
+            <arg value="${sig.file}"/>
+            <arg value="-Static"/>
         </java>
-                <mkdir dir="${report.dir}"/>
-                <echo message="${sigoutput}"/>
-                <echo message="${sigoutput}" file="${report.dir}/cdi_sig_test_results.txt"/>
-                <echo message="Output is also saved to ${report.dir}/cdi_sig_test_results.txt"/>
+        <mkdir dir="${report.dir}"/>
+        <echo message="${sigoutput}"/>
+        <echo message="${sigoutput}" file="${report.dir}/cdi_sig_test_results.txt"/>
+        <echo message="Output is also saved to ${report.dir}/cdi_sig_test_results.txt"/>
     </target>
 
     <target name="copy.settingsxml">
-    <!--
-            <copy file="${porting.home}/settings.xml" todir="${user.home}/.m2"
-                  flatten="true" overwrite="true">
-            </copy>
-    -->
+        <!--
+                <copy file="${porting.home}/settings.xml" todir="${user.home}/.m2"
+                      flatten="true" overwrite="true">
+                </copy>
+        -->
     </target>
     <target name="copy.tck.ext.lib.jar">
         <echo message="Copying cdi-ext-lib jar"/>
@@ -149,7 +135,6 @@
         <copy file="${porting.home}/glassfish-tck-runner/src/test/glassfish-managed/arquillian.template.xml"
               tofile="${porting.home}/glassfish-tck-runner/src/test/glassfish-managed/arquillian.xml">
             <filterset>
-                <filter token="maxClassesRestart" value="${max.classes.restart}"/>
                 <filter token="payaraHome" value="${glassfish.home.base}"/>
                 <filter token="adminHost" value="${admin.host}"/>
                 <filter token="adminPort" value="${admin.port}"/>
@@ -158,60 +143,61 @@
             </filterset>
         </copy>
     </target>
-        
+
     <target name="dist">
         <delete file="${dist}/${dist.file}-${portingkit.version}_${time.stamp.bundle.string}.zip"/>
         <delete file="${porting.home}/glassfish-tck-runner/pom.xml"/>
-        <delete file="${porting.home}/glassfish-tck-runner/src/test/glassfish-managed/arquillian.xml"/>                 
+        <delete file="${porting.home}/glassfish-tck-runner/src/test/glassfish-managed/arquillian.xml"/>
         <if>
-            <available file="${basedir}/build.properties.sani" />
+            <available file="${basedir}/build.properties.sani"/>
             <then>
-                    <property name="prop.file" value="build.properties.sani" />
+                <property name="prop.file" value="build.properties.sani"/>
             </then>
             <else>
-                    <property name="prop.file" value="build.properties" />
+                <property name="prop.file" value="build.properties"/>
             </else>
         </if>
 
         <tstamp>
-            <format property="time.stamp.bundle.string" pattern="dd-MMM-yyyy" locale="en" />
+            <format property="time.stamp.bundle.string" pattern="dd-MMM-yyyy" locale="en"/>
         </tstamp>
 
         <zip destfile="${dist}/${dist.file}-${portingkit.version}_${time.stamp.bundle.string}.zip">
             <zipfileset dir="${basedir}" includes="*.xml, build.properties, classes/**,
                             lib/*.jar, glassfish-tck-runner/**, readme.txt, *.sig, password.template"
-                            excludes="domain*.xml, lib/sigtestdev.jar, glassfish-tck-runner/target/**, glassfish-tck-runner/target*/**, glassfish-tck-runner/src/test/tck20/tck-tests_*" prefix="cdi-tck-glassfish-porting" />
-            <zipfileset dir="${basedir}" includes="${prop.file}" fullpath="cdi-tck-glassfish-porting/build.properties" />
+                        excludes="domain*.xml, lib/sigtestdev.jar, glassfish-tck-runner/target/**, glassfish-tck-runner/target*/**, glassfish-tck-runner/src/test/tck20/tck-tests_*"
+                        prefix="cdi-tck-glassfish-porting"/>
+            <zipfileset dir="${basedir}" includes="${prop.file}" fullpath="cdi-tck-glassfish-porting/build.properties"/>
         </zip>
 
-        <delete file="${basedir}/build.properties.sani" quiet="true" />
+        <delete file="${basedir}/build.properties.sani" quiet="true"/>
     </target>
 
     <target name="dist.sani">
-        <edit.prop.file />                  
-                <antcall target="dist" />
+        <edit.prop.file/>
+        <antcall target="dist"/>
     </target>
 
     <macrodef name="edit.prop.file">
         <sequential>
-            <loadfile srcfile="${basedir}/build.properties" property="props" />
+            <loadfile srcfile="${basedir}/build.properties" property="props"/>
 
             <propertyregex property="porting.home.prop"
-                 input="${props}"
-                 regexp="(porting.home=)(.*)"
-                 replace="\1"
-                 defaultvalue="${props}"
-                 override="true"/>
+                           input="${props}"
+                           regexp="(porting.home=)(.*)"
+                           replace="\1"
+                           defaultvalue="${props}"
+                           override="true"/>
 
             <propertyregex property="glassfish.home.prop"
-                 input="${porting.home.prop}"
-                 regexp="(glassfish.home=)(.*)"
-                 replace="\1"
-                 defaultvalue="${porting.home.prop}"
-                 override="true"/>
+                           input="${porting.home.prop}"
+                           regexp="(glassfish.home=)(.*)"
+                           replace="\1"
+                           defaultvalue="${porting.home.prop}"
+                           override="true"/>
 
             <echo message="${glassfish.home.prop}"
-                      file="${basedir}/build.properties.sani"/>
+                  file="${basedir}/build.properties.sani"/>
 
         </sequential>
     </macrodef>
@@ -227,23 +213,23 @@
     -->
     <presetdef name="stop.domain">
         <if>
-            <os family="unix" />
+            <os family="unix"/>
             <then>
                 <exec dir="${glassfish.home}/bin" executable="${glassfish.home}/bin/stopserv">
-                    <env key="PATH" path="${java.home}/bin${pathsep}${env.PATH}" />
+                    <env key="PATH" path="${java.home}/bin${pathsep}${env.PATH}"/>
                 </exec>
-                <sleep seconds="2" />
+                <sleep seconds="2"/>
             </then>
             <elseif>
                 <or>
-                    <os family="windows" />
-                    <os family="dos" />
+                    <os family="windows"/>
+                    <os family="dos"/>
                 </or>
                 <then>
                     <exec dir="${glassfish.home}/bin" executable="${glassfish.home}/bin/stopserv.bat">
-                        <env key="PATH" path="${java.home}/bin${pathsep}${env.PATH}" />
+                        <env key="PATH" path="${java.home}/bin${pathsep}${env.PATH}"/>
                     </exec>
-                    <sleep seconds="2" />
+                    <sleep seconds="2"/>
                 </then>
             </elseif>
             <else>
@@ -255,23 +241,23 @@
 
     <presetdef name="start.domain">
         <if>
-            <os family="unix" />
+            <os family="unix"/>
             <then>
                 <exec dir="${glassfish.home}/bin" executable="${glassfish.home}/bin/startserv" spawn="true">
-                    <env key="PATH" path="${java.home}/bin${pathsep}${env.PATH}" />
+                    <env key="PATH" path="${java.home}/bin${pathsep}${env.PATH}"/>
                 </exec>
-                <sleep seconds="2" />
+                <sleep seconds="2"/>
             </then>
             <elseif>
                 <or>
-                    <os family="windows" />
-                    <os family="dos" />
+                    <os family="windows"/>
+                    <os family="dos"/>
                 </or>
                 <then>
                     <exec dir="${glassfish.home}/bin" executable="${glassfish.home}/bin/startserv.bat" spawn="true">
-                        <env key="PATH" path="${java.home}/bin${pathsep}${env.PATH}" />
+                        <env key="PATH" path="${java.home}/bin${pathsep}${env.PATH}"/>
                     </exec>
-                    <sleep seconds="2" />
+                    <sleep seconds="2"/>
                 </then>
             </elseif>
             <else>
@@ -283,65 +269,65 @@
 
     <macrodef name="edit.domain.xml">
         <sequential>
-            <property name="domain.file" value="${glassfish.home}/domains/domain1/config/domain.xml" />
-            
-            <copy file="${domain.file}" tofile="${domain.file}.original" failonerror="false" />
-            
-                        
-                        <loadfile property="domain.file.contents" srcfile="${domain.file}" />
+            <property name="domain.file" value="${glassfish.home}/domains/domain1/config/domain.xml"/>
+
+            <copy file="${domain.file}" tofile="${domain.file}.original" failonerror="false"/>
+
+
+            <loadfile property="domain.file.contents" srcfile="${domain.file}"/>
             <propertyregex property="heap.found" input="${domain.file.contents}"
-                regexp="&lt;jvm-options>-Xmx(.*)&lt;/jvm-options>"
-                replace="&lt;jvm-options>-Xmx${max.heap.size}&lt;/jvm-options>"
-                defaultvalue="true" />
+                           regexp="&lt;jvm-options>-Xmx(.*)&lt;/jvm-options>"
+                           replace="&lt;jvm-options>-Xmx${max.heap.size}&lt;/jvm-options>"
+                           defaultvalue="true"/>
             <if>
-                <istrue value="${heap.found}" />
+                <istrue value="${heap.found}"/>
                 <then>
                     <echo>Max heap VM option not found in java-config.</echo>
                 </then>
                 <else>
                     <echo>Setting max heap value to ${max.heap.size}</echo>
-                    <echo message="${heap.found}" file="${domain.file}" />
+                    <echo message="${heap.found}" file="${domain.file}"/>
                     <echo>${domain.file} written to disk.</echo>
                 </else>
             </if>
 
-            <loadfile property="domain.file.contents2" srcfile="${domain.file}" />
+            <loadfile property="domain.file.contents2" srcfile="${domain.file}"/>
             <propertyregex property="perm.gen.found" input="${domain.file.contents2}"
-                regexp="&lt;jvm-options>-XX:MaxPermSize=(.*)&lt;/jvm-options>"
-                replace="&lt;jvm-options>-XX:MaxPermSize=${max.perm.gen.size}&lt;/jvm-options>"
-                defaultvalue="true" />
+                           regexp="&lt;jvm-options>-XX:MaxPermSize=(.*)&lt;/jvm-options>"
+                           replace="&lt;jvm-options>-XX:MaxPermSize=${max.perm.gen.size}&lt;/jvm-options>"
+                           defaultvalue="true"/>
             <if>
-                <istrue value="${perm.gen.found}" />
+                <istrue value="${perm.gen.found}"/>
                 <then>
                     <echo>Max permgen VM option not found in java-config.</echo>
                 </then>
                 <else>
                     <echo>Setting max permgen value to ${max.perm.gen.size}</echo>
-                    <echo message="${perm.gen.found}" file="${domain.file}" />
+                    <echo message="${perm.gen.found}" file="${domain.file}"/>
                     <echo>${domain.file} written to disk.</echo>
                 </else>
             </if>
 
-            <loadfile property="domain.file.contents3" srcfile="${domain.file}" />
+            <loadfile property="domain.file.contents3" srcfile="${domain.file}"/>
             <propertyregex property="ea.set" input="${domain.file.contents3}"
-                regexp="&lt;jvm-options>-ea&lt;/jvm-options>"
-                select="true"
-                defaultvalue="false" />
+                           regexp="&lt;jvm-options>-ea&lt;/jvm-options>"
+                           select="true"
+                           defaultvalue="false"/>
             <if>
-                <isfalse value="${ea.set}" />
+                <isfalse value="${ea.set}"/>
                 <then>
                     <propertyregex property="java.config" input="${domain.file.contents3}"
-                        regexp="(&lt;/java-config>)"
-                        replace="&lt;jvm-options>-ea:org.jboss.cdi.tck...&lt;/jvm-options>\1"
-                        defaultvalue="true" />
+                                   regexp="(&lt;/java-config>)"
+                                   replace="&lt;jvm-options>-ea:org.jboss.cdi.tck...&lt;/jvm-options>\1"
+                                   defaultvalue="true"/>
                     <if>
-                        <istrue value="${java.config}" />
+                        <istrue value="${java.config}"/>
                         <then>
                             <echo>java-config NOT found, something bad happened.</echo>
                         </then>
                         <else>
                             <echo>Adding -ea VM option to java-config.</echo>
-                            <echo message="${java.config}" file="${domain.file}" />
+                            <echo message="${java.config}" file="${domain.file}"/>
                             <echo>${domain.file} written to disk.</echo>
                         </else>
                     </if>
@@ -350,122 +336,144 @@
                     <echo>-ea VM option already set in java-config, so not setting.</echo>
                 </else>
             </if>
-                        
+
             <if>
                 <or>
-                    <os family="windows" />
-                    <os family="dos" />
+                    <os family="windows"/>
+                    <os family="dos"/>
                 </or>
                 <then>
-                    <property name="serverpolicy.file" value="${glassfish.home}/domains/domain1/config/server.policy" />
-                                        <mkdir dir="c:\\tmp" />
-                                        <mkdir dir="c:\\t" />
-                                        <replace file="${domain.file}" value="c:\\t">
-                                          <replacetoken>${com.sun.aas.instanceRoot}/applications</replacetoken>
-                                        </replace>
-                                        <replace file="${serverpolicy.file}" value="c:\\t">
-                                          <replacetoken>${com.sun.aas.instanceRoot}/applications</replacetoken>
-                                        </replace>
+                    <property name="serverpolicy.file" value="${glassfish.home}/domains/domain1/config/server.policy"/>
+                    <mkdir dir="c:\\tmp"/>
+                    <mkdir dir="c:\\t"/>
+                    <replace file="${domain.file}" value="c:\\t">
+                        <replacetoken>${com.sun.aas.instanceRoot}/applications</replacetoken>
+                    </replace>
+                    <replace file="${serverpolicy.file}" value="c:\\t">
+                        <replacetoken>${com.sun.aas.instanceRoot}/applications</replacetoken>
+                    </replace>
                 </then>
             </if>
         </sequential>
     </macrodef>
 
     <target name="stop.v4.domain">
-        <stop.domain />
+        <stop.domain/>
     </target>
-    
+
     <target name="restart.v4.domain">
-            <echo message="Restarting the Glassfish domain"/>
-            <stop.domain />
-            <start.domain />
-            <waitfor maxwait="${wait.for.v4}" maxwaitunit="second" checkevery="1" checkeveryunit="second">
-              <socket server="${admin.host}" port="${admin.port}"/>
-            </waitfor>
-            <echo>Domain started.</echo>
-    </target>
-
-        <target name="start.javadb">
-            <echo message="*** Starting JavaDB "/>
-            <java classname="org.apache.derby.drda.NetworkServerControl"
-                 classpath="${javadb.home}/lib/derby.jar${pathsep}${javadb.home}/lib/derbynet.jar${pathsep}${javadb.home}/lib/derbytools.jar${pathsep}${javadb.home}/lib/derbyclient.jar" fork="true" spawn="true">
-                <sysproperty key="derby.system.home" value="${javadb.home}/databases"/>
-                <sysproperty key="java.security.manager" value=""/>
-                <sysproperty key="java.security.policy" value="${glassfish.home}/domains/domain1/config/server.policy"/>
-                <arg line="-h ${javadb.host} -p ${javadb.port} start"/>
-            </java>
-            <sleep seconds="4"/>
-            <echo message="*** JavaDB Started "/>
-        </target>
-
-        <target name="stop.javadb">
-            <java classname="org.apache.derby.drda.NetworkServerControl"
-             classpath="${javadb.home}/lib/derby.jar${pathsep}${javadb.home}/lib/derbynet.jar${pathsep}${javadb.home}/lib/derbytools.jar${pathsep}${javadb.home}/lib/derbyclient.jar" fork="true" spawn="true">
-             <arg line="-h ${javadb.host} -p ${javadb.port} shutdown"/>
-            </java>
-            <echo message="*** JavaDB Stopped "/>
-        </target>
-
-        <target name="clean">
-            <delete dir="${porting.home}/glassfish-tck-runner/target" quiet="true" />
-            <echo message="*** Deleted ${porting.home}/glassfish-tck-runner/target"/>
-            <delete dir="${porting.home}/reports" quiet="true" />
-            <echo message="*** Deleted ${porting.home}/reports"/>
-        </target>
-        
-        <target name="config.v4">                       
-                <stop.domain />
-				<if>
-                <or>
-                 <os family="windows"/>
-                 <os family="dos"/>
-                </or>
-                <then>
-                    <mvn.dependency.win dir="glassfish-tck-runner"/>
-                </then>
-                <else>
-                    <mvn.dependency dir="glassfish-tck-runner"/>
-                </else>
-				</if>
-                <antcall target="copy.tck.ext.lib.jar"/>                
-        <antcall target="clean" />
-                <edit.domain.xml />
-        <start.domain />
-        <echo>Checking for a socket on ${admin.host} at port ${admin.port}, will wait up to ${wait.for.v4} seconds</echo>
+        <echo message="Restarting the Glassfish domain"/>
+        <stop.domain/>
+        <start.domain/>
         <waitfor maxwait="${wait.for.v4}" maxwaitunit="second" checkevery="1" checkeveryunit="second">
-          <socket server="${admin.host}" port="${admin.port}"/>
+            <socket server="${admin.host}" port="${admin.port}"/>
         </waitfor>
         <echo>Domain started.</echo>
-                <ant antfile="glassfish.xml" target="add.jvm.options"/>
-                <ant antfile="glassfish.xml" target="enable.jms"/>
-                <ant antfile="glassfish.xml" target="set.implicit.cdi"/>
-                <ant antfile="glassfish.xml" target="add.cdi.tck.users"/>
-                
-                <antcall target="stop.javadb" />
-                <antcall target="start.javadb" />
-                <stop.domain/>
     </target>
 
+    <target name="start.javadb">
+        <echo message="*** Starting JavaDB "/>
+        <java classname="org.apache.derby.drda.NetworkServerControl"
+              classpath="${javadb.home}/lib/derby.jar${pathsep}${javadb.home}/lib/derbynet.jar${pathsep}${javadb.home}/lib/derbytools.jar${pathsep}${javadb.home}/lib/derbyclient.jar"
+              fork="true" spawn="true">
+            <sysproperty key="derby.system.home" value="${javadb.home}/databases"/>
+            <sysproperty key="java.security.manager" value=""/>
+            <sysproperty key="java.security.policy" value="${glassfish.home}/domains/domain1/config/server.policy"/>
+            <arg line="-h ${javadb.host} -p ${javadb.port} start"/>
+        </java>
+        <sleep seconds="4"/>
+        <echo message="*** JavaDB Started "/>
+    </target>
+
+    <target name="stop.javadb">
+        <java classname="org.apache.derby.drda.NetworkServerControl"
+              classpath="${javadb.home}/lib/derby.jar${pathsep}${javadb.home}/lib/derbynet.jar${pathsep}${javadb.home}/lib/derbytools.jar${pathsep}${javadb.home}/lib/derbyclient.jar"
+              fork="true" spawn="true">
+            <arg line="-h ${javadb.host} -p ${javadb.port} shutdown"/>
+        </java>
+        <echo message="*** JavaDB Stopped "/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${porting.home}/glassfish-tck-runner/target" quiet="true"/>
+        <echo message="*** Deleted ${porting.home}/glassfish-tck-runner/target"/>
+        <delete dir="${porting.home}/reports" quiet="true"/>
+        <echo message="*** Deleted ${porting.home}/reports"/>
+    </target>
+
+    <target name="config.v4">
+        <stop.domain/>
+        <if>
+            <or>
+                <os family="windows"/>
+                <os family="dos"/>
+            </or>
+            <then>
+                <mvn.dependency.win dir="glassfish-tck-runner"/>
+            </then>
+            <else>
+                <mvn.dependency dir="glassfish-tck-runner"/>
+            </else>
+        </if>
+        <antcall target="copy.tck.ext.lib.jar"/>
+        <antcall target="clean"/>
+        <edit.domain.xml/>
+        <start.domain/>
+        <echo>Checking for a socket on ${admin.host} at port ${admin.port}, will wait up to ${wait.for.v4} seconds
+        </echo>
+        <waitfor maxwait="${wait.for.v4}" maxwaitunit="second" checkevery="1" checkeveryunit="second">
+            <socket server="${admin.host}" port="${admin.port}"/>
+        </waitfor>
+        <echo>Domain started.</echo>
+        <ant antfile="glassfish.xml" target="add.jvm.options"/>
+        <ant antfile="glassfish.xml" target="enable.jms"/>
+        <ant antfile="glassfish.xml" target="set.implicit.cdi"/>
+        <ant antfile="glassfish.xml" target="add.cdi.tck.users"/>
+
+        <antcall target="stop.javadb"/>
+        <antcall target="start.javadb"/>
+        <stop.domain/>
+    </target>
+
+    <target name="determine.mvn.profiles">
+        <if>
+            <equals arg1="${javaee.level}" arg2="core" trim="true"/>
+            <then>
+                <echo message="Testing Core Profile"/>
+                <property name="profiles" value="payara-managed,core"/>
+            </then>
+            <elseif>
+                <equals arg1="${javaee.level}" arg2="web" trim="true"/>
+                <then>
+                    <echo message="Testing Web Profile"/>
+                    <property name="profiles" value="payara-managed,web"/>
+                </then>
+            </elseif>
+            <else>
+                <echo message="Testing Platform (Full Profile)"/>
+                <property name="profiles" value="payara-managed,platform"/>
+            </else>
+        </if>
+    </target>
 
     <presetdef name="mvn.test">
         <exec executable="${maven.executable}">
             <arg value="--global-settings"/>
             <arg value="${porting.home}/settings.xml"/>
             <arg value="-P"/>
-            <arg value="payara-managed"/>
+            <arg value="${profiles}"/>
             <arg value="-U"/>
             <arg value="clean"/>
             <arg value="test"/>
-            <arg value="dependency:tree"/>
         </exec>
     </presetdef>
 
     <presetdef name="mvn.dependency-tree">
         <exec executable="${maven.executable}">
-            <arg value="--global-settings" />
+            <arg value="--global-settings"/>
             <arg value="${porting.home}/settings.xml"/>
-            <arg value="-P" />
-            <arg value="payara-managed" />
+            <arg value="-P"/>
+            <arg value="${profiles}"/>
             <arg value="dependency:tree"/>
         </exec>
     </presetdef>
@@ -477,9 +485,20 @@
             <arg value="--global-settings"/>
             <arg value="${porting.home}/settings.xml"/>
             <arg value="-P"/>
-            <arg value="payara-managed"/>
+            <arg value="${profiles}"/>
             <arg value="-U"/>
             <arg value="test"/>
+        </exec>
+    </presetdef>
+
+    <presetdef name="mvn.dependency-tree.win">
+        <exec executable="cmd">
+            <arg value="/c"/>
+            <arg value="${maven.executable}.cmd"/>
+            <arg value="--global-settings"/>
+            <arg value="${porting.home}/settings.xml"/>
+            <arg value="-P"/>
+            <arg value="${profiles}"/>
             <arg value="dependency:tree"/>
         </exec>
     </presetdef>
@@ -490,26 +509,26 @@
             <!--<arg value="-DtckTest=MessageDrivenBeanContextTest" />-->
         </exec>
     </presetdef>
-        
-        <presetdef name="mvn.install.win">
-		<exec executable="cmd">
-			<arg value="/c"/>
-                        <arg value="${maven.executable}.cmd"/>
-                        <arg value="install"/>
-		</exec>
-	</presetdef>
-	<presetdef name="mvn.dependency">
-		<exec executable="${maven.executable}">
-                        <arg value="--global-settings" />
-			            <arg value="${porting.home}/settings.xml" />
-                        <arg value="dependency:get" />
-						<arg value="-DrepositoryUrl=https://jakarta.oss.sonatype.org/content/repositories/releases"/>
-						<arg value="-DgroupId=jakarta.enterprise"/>
-						<arg value="-DartifactId=cdi-tck-ext-lib"/>
-						<arg value="-Dversion=${cdiext.version}"/>			
-                        <!-- <arg value="-DtckTest=MessageDrivenBeanContextTest" /> -->                      
-		</exec>
-	</presetdef>
+
+    <presetdef name="mvn.install.win">
+        <exec executable="cmd">
+            <arg value="/c"/>
+            <arg value="${maven.executable}.cmd"/>
+            <arg value="install"/>
+        </exec>
+    </presetdef>
+    <presetdef name="mvn.dependency">
+        <exec executable="${maven.executable}">
+            <arg value="--global-settings"/>
+            <arg value="${porting.home}/settings.xml"/>
+            <arg value="dependency:get"/>
+            <arg value="-DrepositoryUrl=https://jakarta.oss.sonatype.org/content/repositories/releases"/>
+            <arg value="-DgroupId=jakarta.enterprise"/>
+            <arg value="-DartifactId=cdi-tck-ext-lib"/>
+            <arg value="-Dversion=${cdiext.version}"/>
+            <!-- <arg value="-DtckTest=MessageDrivenBeanContextTest" /> -->
+        </exec>
+    </presetdef>
 
     <presetdef name="mvn.dependency.win">
         <exec executable="cmd">
@@ -522,5 +541,5 @@
             <arg value="-Dversion=${cdiext.version}"/>
         </exec>
     </presetdef>
-        
+
 </project>
