@@ -45,10 +45,9 @@
         <cdi.tck.version>4.1.0</cdi.tck.version>
         <httpcomponents.version>4.5.5</httpcomponents.version>
         <arquillian.version>1.8.0.Final</arquillian.version>
-        <jakarta.platform.version>10.0.0-RC1</jakarta.platform.version>
         <jaxws-api.version>4.0.1</jaxws-api.version>
-        <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
-        <jakarta.interceptor-api.version>2.1.0</jakarta.interceptor-api.version>
+        <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
+        <jakarta.interceptor-api.version>2.2.0</jakarta.interceptor-api.version>
         <jakarta.faces-api.version>4.0.1</jakarta.faces-api.version>
         <jakarta.resource-api.version>2.1.0</jakarta.resource-api.version>
         <jaxb-api.version>4.0.1</jaxb-api.version>
@@ -57,7 +56,7 @@
         <hk2-api.version>3.0.4</hk2-api.version>
         <jersey.version>3.1.5</jersey.version>
         <jersey-media.version>3.1.2</jersey-media.version>
-        <jakarta-el.version>5.0.0-M1</jakarta-el.version>
+        <jakarta-el.version>6.0.0</jakarta-el.version>
         <arquillian-payara.version>3.0.alpha6</arquillian-payara.version>
     </properties>
 
