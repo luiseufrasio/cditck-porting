@@ -56,7 +56,7 @@
         <hk2-api.version>3.0.4</hk2-api.version>
         <jersey.version>3.1.5</jersey.version>
         <jersey-media.version>3.1.2</jersey-media.version>
-        <jakarta-el.version>6.0.0</jakarta-el.version>
+        <jakarta-el.version>5.0.0-M1</jakarta-el.version>
         <arquillian-payara.version>3.0.alpha6</arquillian-payara.version>
         <jersey-hk2.version>3.1.5.payara-p1</jersey-hk2.version>
         <hk2-locator.version>3.0.2</hk2-locator.version>
