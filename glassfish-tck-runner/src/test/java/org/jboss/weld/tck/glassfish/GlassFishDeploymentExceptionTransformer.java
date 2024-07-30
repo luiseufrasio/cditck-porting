@@ -13,7 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-// Portions Copyright [2022] [Payara Foundation and/or its affiliates]
+// Portions Copyright [2024] [Payara Foundation and/or its affiliates]
 
 package org.jboss.weld.tck.glassfish;
 
@@ -22,42 +22,55 @@ import java.util.List;
 import jakarta.enterprise.inject.spi.DefinitionException;
 import jakarta.enterprise.inject.spi.DeploymentException;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jboss.arquillian.container.spi.client.container.DeploymentExceptionTransformer;
 
 /**
  *
  * See AS7-1197 for more details.
- * 
+ *
  * @see org.jboss.weld.tck.glassfish.GlassFishExtension
  * @author J J Snyder (j.j.snyder@oracle.com)
  */
 public class GlassFishDeploymentExceptionTransformer implements DeploymentExceptionTransformer {
 
     private static final String[] DEPLOYMENT_EXCEPTION_FRAGMENTS = new String[] {
+            "Only normal scopes can be passivating",
             "org.jboss.weld.exceptions.DeploymentException",
             "org.jboss.weld.exceptions.UnserializableDependencyException",
             "org.jboss.weld.exceptions.InconsistentSpecializationException",
             "CDI deployment failure:",
             "org.jboss.weld.exceptions.NullableDependencyException" };
 
-    private static final String[] DEFINITION_EXCEPTION_FRAGMENTS = new String[]
-            { "CDI definition failure:",
-              "org.jboss.weld.exceptions.DefinitionException" };
+    private static final String[] DEFINITION_EXCEPTION_FRAGMENTS = new String[] { "CDI definition failure:",
+            "org.jboss.weld.exceptions.DefinitionException" };
 
+    @Override
     public Throwable transform(Throwable throwable) {
 
         // Arquillian sometimes returns InvocationException with nested AS7
         // exception and sometimes AS7 exception itself
-        Throwable root = throwable;
+        @SuppressWarnings("unchecked")
+        List<Throwable> throwableList = ExceptionUtils.getThrowableList(throwable);
+        if (throwableList.size() < 1)
+            return throwable;
+
+        Throwable root = null;
+
+        if (throwableList.size() == 1) {
+            root = throwable;
+        } else {
+            root = ExceptionUtils.getRootCause(throwable);
+        }
 
         if (root instanceof DeploymentException || root instanceof DefinitionException) {
             return root;
         }
         if (isFragmentFound(DEPLOYMENT_EXCEPTION_FRAGMENTS, root)) {
-            return new DeploymentException(root);
+            return new DeploymentException(root.getMessage());
         }
         if (isFragmentFound(DEFINITION_EXCEPTION_FRAGMENTS, root)) {
-            return new DefinitionException(root);
+            return new DefinitionException(root.getMessage());
         }
         return throwable;
     }

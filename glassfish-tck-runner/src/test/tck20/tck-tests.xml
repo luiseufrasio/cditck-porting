@@ -18,25 +18,19 @@
     <test name="CDI TCK">
 
         <packages>
+
+            <!--package name="org.jboss.cdi.tck.tests.context.*" /-->
             <package name="org.jboss.cdi.tck.tests.*" />
             <package name="org.jboss.cdi.tck.interceptors.tests.*" />
         </packages>
 
         <classes>
-            <!-- CDITCK-587 -->
-            <class name="org.jboss.cdi.tck.tests.event.observer.transactional.roolback.TransactionalObserverRollbackTest">
+            <!-- https://github.com/jakartaee/cdi-tck/issues/440 -->
+            <class name="org.jboss.cdi.tck.tests.full.extensions.lifecycle.processBeanAttributes.specialization.VetoTest">
                 <methods>
                     <exclude name=".*"/>
                 </methods>
             </class>
-
-            <!-- CDITCK-597 -->
-            <class name="org.jboss.cdi.tck.tests.deployment.packaging.ejb.EJBJarDeploymentTest">
-                <methods>
-                    <exclude name=".*"/>
-                </methods>
-            </class>
-
         </classes>
     </test>
 

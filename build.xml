@@ -2,7 +2,7 @@
 <!--
 
     Copyright (c) 2018, 2021 Oracle and/or its affiliates. All rights reserved.
-    Copyright (c) 2019, 2020 Payara Foundation and/or its affiliates. All rights reserved.
+    Copyright (c) 2019, 2024 Payara Foundation and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -82,6 +82,7 @@
             </then>
             <else>
                 <echo message="################# Dependencies at: ${env.DIST}/${env.CDI_TCK_DIST}/artifacts/cdi-tck-impl-${env.CDI_TCK_VERSION}.jar #################"/>
+                <mvn.package dir="glassfish-tck-runner"/>
                 <mvn.test dir="glassfish-tck-runner"/>
                 <mvn.dependency-tree dir="glassfish-tck-runner"/>
             </else>
@@ -463,7 +464,6 @@
             <arg value="-P"/>
             <arg value="${profiles}"/>
             <arg value="-U"/>
-            <arg value="clean"/>
             <arg value="test"/>
         </exec>
     </presetdef>
@@ -503,10 +503,10 @@
         </exec>
     </presetdef>
 
-    <presetdef name="mvn.install">
+    <presetdef name="mvn.package">
         <exec executable="${maven.executable}">
-            <arg value="install"/>
-            <!--<arg value="-DtckTest=MessageDrivenBeanContextTest" />-->
+            <arg value="clean"/>
+            <arg value="package"/>
         </exec>
     </presetdef>
 
@@ -526,7 +526,6 @@
             <arg value="-DgroupId=jakarta.enterprise"/>
             <arg value="-DartifactId=cdi-tck-ext-lib"/>
             <arg value="-Dversion=${cdiext.version}"/>
-            <!-- <arg value="-DtckTest=MessageDrivenBeanContextTest" /> -->
         </exec>
     </presetdef>
 
