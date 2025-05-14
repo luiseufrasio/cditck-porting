@@ -377,7 +377,6 @@
                             <excludedGroups>javaee-full,se</excludedGroups>
                             <dependenciesToScan>
                                 <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
-                                <dependency>jakarta.enterprise:cdi-tck-web-impl</dependency>
                             </dependenciesToScan>
                         </configuration>
                     </plugin>
