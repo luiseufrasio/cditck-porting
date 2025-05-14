@@ -365,21 +365,6 @@
         </profile>
         <profile>
             <id>web</id>
-            <!-- Pull in the additional TCK artefact and scan it -->
-            <dependencies>
-                <dependency>
-                    <groupId>jakarta.enterprise</groupId>
-                    <artifactId>cdi-tck-web-impl</artifactId>
-                    <version>${cdi.tck.version}</version>
-                    <scope>test</scope>
-                    <exclusions>
-                        <exclusion>
-                            <artifactId>container-se-api</artifactId>
-                            <groupId>org.jboss.arquillian.container</groupId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-            </dependencies>
             <build>
                 <plugins>
                     <plugin>
