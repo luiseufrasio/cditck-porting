@@ -364,6 +364,42 @@
             </build>
         </profile>
         <profile>
+            <id>web</id>
+            <!-- Pull in the additional TCK artefact and scan it -->
+            <dependencies>
+                <dependency>
+                    <groupId>jakarta.enterprise</groupId>
+                    <artifactId>cdi-tck-web-impl</artifactId>
+                    <version>${cdi.tck.version}</version>
+                    <scope>test</scope>
+                    <exclusions>
+                        <exclusion>
+                            <artifactId>container-se-api</artifactId>
+                            <groupId>org.jboss.arquillian.container</groupId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>src/test/tck20/tck-tests.xml</suiteXmlFile>
+                            </suiteXmlFiles>
+                            <excludedGroups>javaee-full,se</excludedGroups>
+                            <dependenciesToScan>
+                                <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
+                                <dependency>jakarta.enterprise:cdi-tck-web-impl</dependency>
+                            </dependenciesToScan>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>platform</id>
             <build>
                 <plugins>
