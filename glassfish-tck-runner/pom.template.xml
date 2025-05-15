@@ -364,6 +364,26 @@
             </build>
         </profile>
         <profile>
+            <id>web</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>src/test/tck20/tck-tests.xml</suiteXmlFile>
+                            </suiteXmlFiles>
+                            <excludedGroups>javaee-full,se</excludedGroups>
+                            <dependenciesToScan>
+                                <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
+                            </dependenciesToScan>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>platform</id>
             <build>
                 <plugins>
